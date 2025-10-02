@@ -1,0 +1,238 @@
+services:
+  # MariaDB Database
+  mariadb:
+    image: mariadb:11.2
+    container_name: smartlipad_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-smartlipad_db}
+      MYSQL_USER: ${DB_USER:-smartlipad_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-smartlipad_password}
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - smartlipad_network
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for Celery task queue
+  redis:
+    image: redis:7-alpine
+    container_name: smartlipad_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - smartlipad_network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # SmartLipad Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartlipad_backend
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      # Python
+      PYTHONPATH: /app
+      
+      # Database
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-smartlipad_user}
+      DB_PASSWORD: ${DB_PASSWORD:-smartlipad_password}
+      DB_NAME: ${DB_NAME:-smartlipad_db}
+      
+      # API
+      API_HOST: 0.0.0.0
+      API_PORT: 8000
+      DEBUG: ${DEBUG:-False}
+      
+      # Security
+      SECRET_KEY: ${SECRET_KEY:-change_this_secret_key_in_production}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      
+      # Scraping
+      SCRAPER_USER_AGENT: ${SCRAPER_USER_AGENT:-Mozilla/5.0}
+      SCRAPER_TIMEOUT: 30
+      SCRAPER_MAX_RETRIES: 3
+      
+      # Forecasting
+      FORECAST_HORIZON_DAYS: 365
+      PROPHET_SEASONALITY_MODE: multiplicative
+      
+      # External APIs
+      SKYSCANNER_API_KEY: ${SKYSCANNER_API_KEY:-}
+      
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      LOG_FILE: logs/smartlipad.log
+    volumes:
+      - ./backend:/app/backend
+      - ./logs:/app/logs
+      - backend_cache:/app/.cache
+    networks:
+      - smartlipad_network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Celery Worker for background tasks
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartlipad_celery_worker
+    restart: unless-stopped
+    command: celery -A backend.tasks worker --loglevel=info
+    environment:
+      # Python
+      PYTHONPATH: /app
+      
+      # Database
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-smartlipad_user}
+      DB_PASSWORD: ${DB_PASSWORD:-smartlipad_password}
+      DB_NAME: ${DB_NAME:-smartlipad_db}
+      
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      
+      # Scraping
+      SCRAPER_USER_AGENT: ${SCRAPER_USER_AGENT:-Mozilla/5.0}
+      SCRAPER_TIMEOUT: 30
+      
+      # Forecasting
+      FORECAST_HORIZON_DAYS: 365
+      
+      # External APIs
+      SKYSCANNER_API_KEY: ${SKYSCANNER_API_KEY:-}
+    volumes:
+      - ./backend:/app/backend
+      - ./logs:/app/logs
+    networks:
+      - smartlipad_network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Celery Beat for scheduled tasks
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartlipad_celery_beat
+    restart: unless-stopped
+    command: celery -A backend.tasks beat --loglevel=info
+    environment:
+      # Python
+      PYTHONPATH: /app
+      
+      # Database
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-smartlipad_user}
+      DB_PASSWORD: ${DB_PASSWORD:-smartlipad_password}
+      DB_NAME: ${DB_NAME:-smartlipad_db}
+      
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+    volumes:
+      - ./backend:/app/backend
+      - celery_beat_data:/app/celerybeat-schedule
+    networks:
+      - smartlipad_network
+    depends_on:
+      - redis
+      - celery_worker
+
+  # Optional: Flower for Celery monitoring
+  flower:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: smartlipad_flower
+    restart: unless-stopped
+    command: celery -A backend.tasks flower --port=5555
+    ports:
+      - "5555:5555"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    networks:
+      - smartlipad_network
+    depends_on:
+      - redis
+      - celery_worker
+    profiles:
+      - monitoring
+
+  # Optional: Adminer for database management
+  adminer:
+    image: adminer:latest
+    container_name: smartlipad_adminer
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: mariadb
+    networks:
+      - smartlipad_network
+    depends_on:
+      - mariadb
+    profiles:
+      - tools
+
+networks:
+  smartlipad_network:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
+  redis_data:
+    driver: local
+  backend_cache:
+    driver: local
+  celery_beat_data:
+    driver: local

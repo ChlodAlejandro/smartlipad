@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation (can be excluded from image)
+*.md
+IMPLEMENTATION.md
+DEVELOPER_GUIDE.md
+QUICKSTART.md
+INSTALLATION_TROUBLESHOOTING.md
+
+# Scripts (not needed in container)
+*.bat
+setup_db.bat
+run.bat
+install_deps.bat
+
+# Other
+node_modules/
+frontend/
+tests/
