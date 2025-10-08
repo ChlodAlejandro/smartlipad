@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SmartLipad – Search Flights</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f7fbff;--text:#0f172a;--muted:#6b7280;--ring:#e5e7eb;--card:#ffffff;--primary:#2563eb;--shadow:0 8px 28px rgba(15,23,42,.08);--success:#16a34a;--danger:#ef4444;--neutral:#94a3b8;}
+    *{box-sizing:border-box} html,body{margin:0;padding:0}
+    body{font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:radial-gradient(1200px 600px at 50% -200px,#eaf3ff 10%,#f7fbff 60%,#f7fbff 100%);line-height:1.55;}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 20px 60px}
+    .topbar{display:flex;align-items:center;gap:12px;border-bottom:1px solid #edf1f7;padding-bottom:14px}
+    a.back{text-decoration:none;color:var(--muted);font-weight:600;display:inline-flex;gap:6px;align-items:center}
+    a.back::before{content:"←";display:inline-block;transform:translateY(-1px)}
+    .brand{display:flex;align-items:center;gap:8px;margin:0 auto 0 8px}
+    .brand img{width:20px;height:20px;object-fit:contain}
+    .brand b{letter-spacing:.2px}
+    nav{margin-left:auto;display:flex;gap:18px}
+    nav a{text-decoration:none;color:#111827;font-weight:700;font-size:14px;padding:6px 10px;border-radius:8px}
+    nav a.active{background:#111827;color:#fff;box-shadow:var(--shadow)}
+    .title{text-align:center;margin:18px 0 6px;font-size:28px;font-weight:800}
+    .subtitle{text-align:center;color:var(--muted);margin-bottom:18px}
+    .card{background:var(--card);border:1px solid var(--ring);border-radius:16px;padding:18px;box-shadow:var(--shadow)}
+    .search-card{max-width:820px;margin:0 auto}
+    .inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end}
+    label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px;display:block}
+    select,.input{width:100%;border:1px solid var(--ring);border-radius:10px;background:#fff;padding:12px;font:inherit}
+    .btn-primary{margin:12px auto 0;display:inline-flex;gap:8px;align-items:center;justify-content:center;padding:12px 18px;border-radius:999px;background:var(--primary);color:#fff;font-weight:800;border:0;cursor:pointer;box-shadow:var(--shadow)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:820px;margin:14px auto 0}
+    .panel{border:1px solid var(--ring);border-radius:12px;background:#fff;padding:14px}
+    .panel h4{margin:0 0 10px;font-size:16px;display:flex;align-items:center;gap:8px}
+    .chip{background:#ecfdf5;border:1px solid #bbf7d0;color:#047857;font-weight:700;border-radius:999px;padding:4px 8px;font-size:12px}
+    .stats{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+    .stats .label{color:var(--muted)}
+    .panel .list{list-style:none;padding-left:0;margin:0;display:grid;gap:8px}
+    .list li{display:flex;align-items:center;gap:10px;color:#1f2937;font-size:14px}
+    .panel .ghost{width:100%;border:1px solid var(--ring);border-radius:8px;height:36px;background:#f8fafc;display:flex;align-items:center;justify-content:center;font-weight:700;color:#0f172a;text-decoration:none}
+    .section{max-width:820px;margin:14px auto 0}
+    .section h3{margin:0 0 12px}
+    .routes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .route{border:1px solid var(--ring);border-radius:12px;background:#fff;padding:12px;display:grid;gap:6px}
+    .route .head{font-weight:700}
+    .route .price{font-weight:800}
+    .route .delta{font-weight:700;font-size:12px}
+    .up{color:#ef4444}.down{color:#16a34a}.flat{color:#94a3b8}
+    .badge{position:fixed;right:18px;bottom:18px;background:#0f172a;color:#fff;padding:8px 10px;border-radius:10px;font-size:12px;box-shadow:var(--shadow)}
+    @media (max-width:960px){.inputs{grid-template-columns:1fr 1fr}.routes{grid-template-columns:1fr 1fr}}
+    @media (max-width:640px){.inputs{grid-template-columns:1fr}.routes{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="Homepage.html">Back</a>
+      <div class="brand">
+        <img src="assets/airplane.png" alt="SmartLipad">
+        <b>SmartLipad</b>
+      </div>
+      <nav>
+        <a href="Homepage.html">Home</a>
+        <a class="active" href="search.html">Search</a>
+        <a href="predictions.html">Predictions</a>
+        <a href="Compare.html">Compare</a>
+      </nav>
+    </div>
+
+    <h1 class="title">Search Flights</h1>
+    <div class="subtitle">Find the best deals on domestic flights in the Philippines</div>
+
+    <section class="card search-card">
+      <div class="inputs">
+        <div>
+          <label for="from">From</label>
+          <select id="from" required>
+            <option value="" disabled selected>Select origin</option>
+            <option>Manila (Ninoy Aquino Intl – MNL)</option>
+            <option>Clark (Clark Intl – CRK)</option>
+            <option>Subic (Subic Bay Intl – SFS)</option>
+            <option>Laoag (Laoag Intl – LAO)</option>
+            <option>Baguio (Loakan Airport – BAG)</option>
+            <option>Naga (Naga Airport – WNP)</option>
+            <option>Legazpi (Bicol Intl – LGP)</option>
+            <option>Virac (Virac Airport – VRC)</option>
+            <option>San Jose (San Jose – SJI)</option>
+            <option>Masbate (Masbate – MBT)</option>
+            <option>Basco (Basco – BSO)</option>
+            <option>Baler (Baler – BQA)</option>
+            <option>Cebu (Mactan–Cebu Intl – CEB)</option>
+            <option>Iloilo (Iloilo Intl – ILO)</option>
+            <option>Bacolod (Bacolod–Silay – BCD)</option>
+            <option>Kalibo (Kalibo – KLO)</option>
+            <option>Caticlan/Boracay (Godofredo P. Ramos – MPH)</option>
+            <option>Roxas (Roxas – RXS)</option>
+            <option>Tacloban (Daniel Z. Romualdez – TAC)</option>
+            <option>Ormoc (Ormoc – OMC)</option>
+            <option>Catarman (Catarman – CRM)</option>
+            <option>Bohol (Panglao – TAG)</option>
+            <option>Davao (Francisco Bangoy Intl – DVO)</option>
+            <option>Cagayan de Oro (Laguindingan – CGY)</option>
+            <option>General Santos (General Santos – GES)</option>
+            <option>Zamboanga (Zamboanga Intl – ZAM)</option>
+            <option>Butuan (Bancasi – BXU)</option>
+            <option>Dipolog (Dipolog – DPL)</option>
+            <option>Ozamiz (Labo – OZC)</option>
+            <option>Surigao (Surigao – SUG)</option>
+            <option>Siargao (Sayak – IAO)</option>
+            <option>Cotabato (Awang – CBO)</option>
+            <option>Pagadian (Pagadian – PAG)</option>
+            <option>Camiguin (Mambajao – CGM)</option>
+            <option>Jolo (Jolo – JOL)</option>
+            <option>Tawi-Tawi (Sanga-Sanga – TWT)</option>
+            <option>Puerto Princesa (Puerto Princesa Intl – PPS)</option>
+            <option>Coron (Busuanga – USU)</option>
+            <option>El Nido (Lio – ENI)</option>
+            <option>San Vicente (San Vicente – SWL)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="to">To</label>
+          <select id="to" required>
+            <option value="" disabled selected>Select destination</option>
+            <!-- same list as from -->
+            <option>Manila (Ninoy Aquino Intl – MNL)</option>
+            <option>Clark (Clark Intl – CRK)</option>
+            <option>Subic (Subic Bay Intl – SFS)</option>
+            <option>Laoag (Laoag Intl – LAO)</option>
+            <option>Baguio (Loakan Airport – BAG)</option>
+            <option>Naga (Naga Airport – WNP)</option>
+            <option>Legazpi (Bicol Intl – LGP)</option>
+            <option>Virac (Virac Airport – VRC)</option>
+            <option>San Jose (San Jose – SJI)</option>
+            <option>Masbate (Masbate – MBT)</option>
+            <option>Basco (Basco – BSO)</option>
+            <option>Baler (Baler – BQA)</option>
+            <option>Cebu (Mactan–Cebu Intl – CEB)</option>
+            <option>Iloilo (Iloilo Intl – ILO)</option>
+            <option>Bacolod (Bacolod–Silay – BCD)</option>
+            <option>Kalibo (Kalibo – KLO)</option>
+            <option>Caticlan/Boracay (Godofredo P. Ramos – MPH)</option>
+            <option>Roxas (Roxas – RXS)</option>
+            <option>Tacloban (Daniel Z. Romualdez – TAC)</option>
+            <option>Ormoc (Ormoc – OMC)</option>
+            <option>Catarman (Catarman – CRM)</option>
+            <option>Bohol (Panglao – TAG)</option>
+            <option>Davao (Francisco Bangoy Intl – DVO)</option>
+            <option>Cagayan de Oro (Laguindingan – CGY)</option>
+            <option>General Santos (General Santos – GES)</option>
+            <option>Zamboanga (Zamboanga Intl – ZAM)</option>
+            <option>Butuan (Bancasi – BXU)</option>
+            <option>Dipolog (Dipolog – DPL)</option>
+            <option>Ozamiz (Labo – OZC)</option>
+            <option>Surigao (Surigao – SUG)</option>
+            <option>Siargao (Sayak – IAO)</option>
+            <option>Cotabato (Awang – CBO)</option>
+            <option>Pagadian (Pagadian – PAG)</option>
+            <option>Camiguin (Mambajao – CGM)</option>
+            <option>Jolo (Jolo – JOL)</option>
+            <option>Tawi-Tawi (Sanga-Sanga – TWT)</option>
+            <option>Puerto Princesa (Puerto Princesa Intl – PPS)</option>
+            <option>Coron (Busuanga – USU)</option>
+            <option>El Nido (Lio – ENI)</option>
+            <option>San Vicente (San Vicente – SWL)</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="date">Departure Date</label>
+          <input type="date" id="date" class="input">
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="window.location.href='results.html'">Search Flights</button>
+    </section>
+  </div>
+</body>
+</html>
