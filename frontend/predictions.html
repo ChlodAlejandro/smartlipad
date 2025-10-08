@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>SmartLipad - Predictions</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;margin:0;padding:0}
+:root{--page-bg:#f5f7fb;--card:#ffffff;--muted:#6b7280;--text:#0b1220;--link-blue:#2563eb;--green:#10b981;--red:#ef4444;--light-border:rgba(15,23,42,0.06);--shadow:0 6px 18px rgba(11,36,64,0.04);}
+html,body{height:100%;background:var(--page-bg);color:var(--text)}
+.wrapper{max-width:1200px;margin:28px auto;padding:24px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;border-bottom:1px solid rgba(11,36,64,0.04)}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.back-btn{display:inline-flex;align-items:center;gap:10px;color:var(--muted);cursor:pointer;font-size:14px}
+.back-btn img{width:18px;height:18px}
+.brand{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:var(--text)}
+.brand img{width:20px;height:20px}
+.topnav{display:flex;gap:18px;align-items:center}
+.topnav a{color:var(--muted);text-decoration:none;padding:8px 14px;border-radius:8px;font-size:14px}
+.topnav a.active{background:#0b1220;color:#fff;padding:8px 16px;border-radius:10px;box-shadow:0 6px 18px rgba(11,36,64,0.12)}
+.header{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:18px}
+.header .icon-wrap{width:48px;height:48px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbf2ff);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(124,77,255,0.08)}
+.header .icon-wrap img{width:26px;height:26px}
+.title-main{font-size:22px;font-weight:700}
+.title-sub{color:var(--muted);font-size:13px;max-width:760px;text-align:center}
+.route-card{background:var(--card);border-radius:12px;padding:18px;margin:22px 0;box-shadow:var(--shadow);border:1px solid var(--light-border);display:flex;align-items:center;justify-content:space-between}
+.route-left{display:flex;align-items:center;gap:12px}
+.route-left img{width:18px;height:18px}
+.route-left .route-meta{display:flex;flex-direction:column}
+.route-left .route-title{font-size:13px;color:var(--muted)}
+.route-left .route-value{font-weight:700;color:var(--link-blue)}
+.route-right{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:13px}
+.summary-row{display:flex;gap:20px;align-items:stretch;justify-content:space-between;margin:6px 0 26px 0}
+.summary-card{flex:1;min-width:0;background:var(--card);border-radius:10px;padding:22px 20px;display:flex;gap:16px;align-items:flex-start;border:1px solid var(--light-border);box-shadow:0 6px 14px rgba(11,36,64,0.03)}
+.summary-left{width:46px;display:flex;align-items:flex-start;justify-content:center;padding-top:4px}
+.summary-left img{width:22px;height:22px;display:block}
+.summary-body{flex:1;display:flex;flex-direction:column;align-items:flex-start}
+.small-label{color:var(--muted);font-size:13px}
+.big-label{font-size:22px;font-weight:800;margin-top:6px;line-height:1}
+.price{font-size:15px;margin-top:8px;color:#111827}
+.pill{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:6px 12px;border-radius:16px;font-weight:700;font-size:12px}
+.pill.green{background:rgba(16,185,129,0.08);color:var(--green)}
+.pill.red{background:rgba(239,68,68,0.06);color:var(--red)}
+.pill.blue{background:rgba(37,99,235,0.06);color:var(--link-blue)}
+.chart-card{background:var(--card);border-radius:10px;padding:18px;border:1px solid var(--light-border);box-shadow:var(--shadow);margin-bottom:20px}
+.chart-title{font-weight:700;margin-bottom:12px}
+.canvas-fixed{width:100%;height:320px;max-height:420px;position:relative}
+.canvas-fixed canvas{width:100% !important;height:100% !important;display:block}
+.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px}
+.how-box{background:var(--card);padding:18px;border-radius:10px;border:1px solid var(--light-border);box-shadow:0 6px 14px rgba(11,36,64,0.03)}
+.how-box h3{display:flex;align-items:center;gap:10px;font-size:15px;margin-bottom:8px}
+.how-box h3 img{width:18px;height:18px}
+.how-footer{margin-top:12px;padding:12px;background:rgba(124,77,255,0.06);border-radius:8px;font-size:13px;color:var(--muted);border:1px solid rgba(124,77,255,0.08)}
+@media (max-width:1000px){.wrapper{padding:16px}.summary-row{flex-direction:column}.how-grid{grid-template-columns:1fr}.canvas-fixed{height:260px}}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="back-btn" onclick="history.back()"><img src="assets/left_arrow.png" alt="back">Back</div>
+      <div class="brand"><img src="assets/airplane.png" alt="brand">SmartLipad</div>
+    </div>
+    <div class="topnav">
+      <a href="Homepage.html">Home</a>
+      <a href="search.html">Search</a>
+      <a class="active" href="predictions.html">Predictions</a>
+      <a href="Compare.html">Compare</a>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="icon-wrap"><img src="assets/brain_symbol.png" alt="ai"></div>
+    <div class="title-main">AI Fare Predictions</div>
+    <div class="title-sub">Our AI analyzes historical flight data to predict future fare trends. Plan your trips and save money by booking at the optimal time.</div>
+  </div>
+
+  <div class="route-card">
+    <div class="route-left">
+      <img src="assets/airplane.png" alt="plane">
+      <div class="route-meta">
+        <div class="route-title">Current Route</div>
+        <div class="route-value" id="currentRoute">Manila → Cebu</div>
+      </div>
+    </div>
+    <div class="route-right"><img src="assets/brain_symbol.png" alt="ai small" style="width:20px;height:20px">AI Powered</div>
+  </div>
+
+  <div class="summary-row">
+    <div class="summary-card">
+      <div class="summary-left"><img src="assets/green_trend.png" alt="best"></div>
+      <div class="summary-body">
+        <div class="small-label">Best Time to Fly</div>
+        <div class="big-label" id="bestMonth" style="color:#10b981">Mar 2025</div>
+        <div class="price" id="bestPrice">₱2,650</div>
+        <div class="pill green" id="bestPill"><span id="savings">37% cheaper</span></div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-left"><img src="assets/red_trend.png" alt="expensive"></div>
+      <div class="summary-body">
+        <div class="small-label">Most Expensive</div>
+        <div class="big-label" id="expMonth" style="color:#ef4444">Dec 2025</div>
+        <div class="price" id="expPrice">₱4,200</div>
+        <div class="pill red" id="peakPill">Peak Season</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-left"><img src="assets/I_Button.png" alt="avg"></div>
+      <div class="summary-body">
+        <div class="small-label">Average Fare</div>
+        <div class="big-label" id="avgFare" style="color:#2563eb">₱3,250</div>
+        <div class="small-label">2025 Average</div>
+        <div class="pill blue" id="yearPill">Yearly Trend</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-card"><div class="chart-title">12-Month Fare Forecast</div><div class="canvas-fixed"><canvas id="lineChart"></canvas></div></div>
+  <div class="chart-card"><div class="chart-title">Monthly Fare Breakdown</div><div class="canvas-fixed"><canvas id="barChart"></canvas></div></div>
+
+  <div class="how-grid">
+    <div class="how-box">
+      <h3><img src="assets/left_arrow.png" alt="">Data Sources</h3>
+      <ul style="color:#6b7280;margin-left:18px">
+        <li>Historical flight prices from major Philippine airlines</li>
+        <li>Seasonal travel patterns and demand fluctuations</li>
+        <li>Holiday schedules and special events</li>
+        <li>Economic indicators and fuel price trends</li>
+      </ul>
+      <div class="how-footer">Accuracy: Our predictions have shown 85% accuracy for 3-month forecasts and 72% accuracy for 12-month predictions based on historical validation.</div>
+    </div>
+    <div class="how-box">
+      <h3><img src="assets/brain_symbol.png" alt="">Prediction Model</h3>
+      <ul style="color:#6b7280;margin-left:18px">
+        <li>Prophet time series forecasting</li>
+        <li>Machine learning pattern recognition</li>
+        <li>Confidence intervals and uncertainty modeling</li>
+        <li>Continuous model updates with new data</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+let lineChart, barChart
+const labels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const values=[3000,2800,2650,2900,3100,3300,3500,3400,3200,3100,3000,3700]
+const ctx1=document.getElementById('lineChart').getContext('2d')
+const ctx2=document.getElementById('barChart').getContext('2d')
+lineChart=new Chart(ctx1,{type:'line',data:{labels,datasets:[{data:values,tension:.28,pointRadius:5,borderWidth:2.5,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.04)',pointBackgroundColor:'#2563eb'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}})
+barChart=new Chart(ctx2,{type:'bar',data:{labels,datasets:[{data:values,backgroundColor:'rgba(37,99,235,0.9)',borderRadius:8,maxBarThickness:48}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}})
+</script>
+</body>
+</html>
