@@ -1,0 +1,3 @@
+"""
+SmartLipad Backend - Test Suite
+"""

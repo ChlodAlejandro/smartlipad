@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SmartLipad – Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f7fafc;--card:#ffffff;--text:#0f172a;--muted:#6b7280;--ring:#e5e7eb;--primary:#2563eb;--shadow:0 8px 28px rgba(15,23,42,.08);--success:#16a34a;}
+    *{box-sizing:border-box} html,body{margin:0;padding:0}
+    body{font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:#f6f8fb;line-height:1.55}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 20px 80px}
+    .topbar{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+    a.back{text-decoration:none;color:var(--muted);font-weight:600;display:inline-flex;gap:6px;align-items:center}
+    a.back::before{content:"←";display:inline-block;transform:translateY(-1px)}
+    .brand{display:flex;align-items:center;gap:8px;margin:0 auto 0 12px}
+    .brand img{width:18px;height:18px;object-fit:contain}
+    .brand b{font-size:13px;letter-spacing:.2px}
+    .tag{margin-left:auto;background:#eaf2ff;color:#1e40af;border:1px solid #d8e6ff;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;text-decoration:none}
+    .bar{background:var(--card);border:1px solid var(--ring);border-radius:12px;padding:12px;box-shadow:var(--shadow);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .chip{border:1px solid var(--ring);border-radius:10px;background:#fff;padding:8px 10px;font-weight:700;font-size:14px}
+    .sep{color:#cbd5e1}
+    .right{margin-left:auto;display:flex;gap:8px;align-items:center}
+    select{border:1px solid var(--ring);border-radius:8px;padding:8px 10px;background:#fff;font:inherit}
+    .results{display:grid;gap:10px;margin-top:12px}
+    .card{background:#fff;border:1px solid var(--ring);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}
+    .air{display:flex;align-items:center;gap:10px}
+    .logo{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;background:#ef4444}
+    .air .name{font-weight:700}
+    .meta{display:grid;grid-template-columns:80px 1fr 80px;gap:16px;margin-top:6px;color:#1f2937}
+    .time{font-weight:800}
+    .dur{color:var(--muted);font-size:13px}
+    .stops{font-size:12px;color:#0f172a;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;padding:4px 8px;justify-self:start}
+    .pricebox{text-align:right}
+    .price{font-weight:800;font-size:18px}
+    .deal{display:inline-block;margin-top:6px;font-size:12px;color:#065f46;background:#ecfdf5;border:1px solid #bbf7d0;border-radius:999px;padding:4px 8px;font-weight:700}
+    .btn{display:inline-block;margin-top:8px;background:var(--primary);color:#fff;border:0;border-radius:10px;padding:10px 12px;font-weight:800;text-decoration:none}
+    .tips{margin-top:12px;background:#fff;border:1px solid var(--ring);border-radius:12px;padding:12px}
+    .tips h4{margin:0 0 6px} .tips p{margin:0;color:#6b7280;font-size:14px}
+    .badge{position:fixed;right:18px;bottom:18px;background:#0f172a;color:#fff;padding:6px 10px;border-radius:10px;font-size:12px;box-shadow:var(--shadow)}
+    @media (max-width:640px){.meta{grid-template-columns:1fr;gap:4px}.pricebox{text-align:left}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="search.html">Back</a>
+      <div class="brand"><img src="assets/airplane.png" alt="SmartLipad logo"><b>SmartLipad</b></div>
+      <a class="tag" href="#">5 flights found</a>
+    </div>
+    <div class="bar">
+      <div class="chip">Manila → Cebu</div><span class="sep">•</span>
+      <div class="chip">Today</div><span class="sep">•</span>
+      <div class="chip">1 adult, Economy</div>
+      <div class="right">
+        <label style="font-size:12px;color:#6b7280">Sort</label>
+        <select><option>Lowest price</option><option>Shortest duration</option><option>Earliest departure</option></select>
+        <label style="font-size:12px;color:#6b7280">Stops</label>
+        <select><option>Any</option><option>Non-stop</option><option>1 stop</option></select>
+      </div>
+    </div>
+    <div class="results">
+      <div class="card"><div><div class="air"><div class="logo" style="background:#ef4444">PR</div><div class="name">Philippine Airlines</div></div><div class="meta"><div class="time">06:00</div><div class="dur">1h 25m · A320</div><div class="time" style="text-align:right">07:25</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱3,650</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
+      <div class="card"><div><div class="air"><div class="logo" style="background:#0ea5e9">5J</div><div class="name">Cebu Pacific</div></div><div class="meta"><div class="time">08:15</div><div class="dur">1h 30m · A320</div><div class="time" style="text-align:right">09:45</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱3,890</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
+      <div class="card"><div><div class="air"><div class="logo" style="background:#10b981">DG</div><div class="name">CebGo</div></div><div class="meta"><div class="time">10:00</div><div class="dur">1h 35m · ATR 72</div><div class="time" style="text-align:right">11:35</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱3,950</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
+      <div class="card"><div><div class="air"><div class="logo" style="background:#f59e0b">2P</div><div class="name">PAL Express</div></div><div class="meta"><div class="time">12:40</div><div class="dur">1h 25m · A321</div><div class="time" style="text-align:right">14:05</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱4,280</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
+      <div class="card"><div><div class="air"><div class="logo" style="background:#64748b">Z2</div><div class="name">Philippines AirAsia</div></div><div class="meta"><div class="time">15:10</div><div class="dur">1h 30m · A320</div><div class="time" style="text-align:right">16:40</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱4,600</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
+    </div>
+    <div class="tips"><h4>💡 Pro Tips</h4><p>Prices are generally lower when you book 1–2 months in advance. Try to avoid peak hours (5–9am & 5–9pm).</p></div>
+    <div class="badge">Made by • you</div>
+  </div>
+</body>
+</html>
