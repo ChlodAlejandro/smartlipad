@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SmartLipad – Route Fare Comparison</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{--bg:#f6f7fb;--card:#ffffff;--text:#0f172a;--muted:#6b7280;--ring:#e5e7eb;--primary:#2563eb;--success:#16a34a;--danger:#dc2626;--chip:#eff6ff}
+    *{box-sizing:border-box} html,body{margin:0;padding:0}
+    body{font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:var(--bg);line-height:1.55}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+    .topbar{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--muted);font-weight:600}
+    .back::before{content:"←";display:inline-block;transform:translateY(-1px)}
+    .brand{display:inline-flex;align-items:center;gap:8px;margin:0 auto 0 12px}
+    .brand img{width:20px;height:20px;object-fit:contain}
+    .brand b{font-size:14px;letter-spacing:.2px}
+    .pill-ghost{margin-left:auto;font-size:12px;background:#e8f0ff;color:#1d4ed8;border-radius:999px;padding:6px 10px;border:1px solid #dbe7ff;text-decoration:none}
+    h1.title{text-align:center;margin:10px 0 8px;font-size:28px}
+    .subtitle{text-align:center;color:var(--muted);margin-bottom:18px}
+    .card{background:var(--card);border:1px solid var(--ring);border-radius:14px;padding:16px}
+    .section{margin-top:16px}
+    .settings-grid{display:grid;gap:12px}
+    .inline{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .inline label{font-size:14px;color:var(--muted)}
+    .date-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ring);border-radius:10px;padding:8px 10px;background:#fff}
+    .date-pill input{border:0;outline:0;font:inherit}
+    .chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:6px}
+    .chip{padding:10px 12px;border-radius:10px;border:1px solid var(--ring);background:var(--chip);font-weight:600;font-size:14px;color:#1e3a8a;text-align:center;cursor:pointer;user-select:none}
+    .chip.red{background:#fee2e2;color:#991b1b} .chip.green{background:#dcfce7;color:#14532d} .chip.outline{background:#fff;color:#334155}
+    .banner{margin-top:10px;border-radius:10px;border:1px solid #d1fae5;background:#ecfdf5;padding:10px 12px;color:#065f46;font-weight:600;display:flex;align-items:center;gap:10px}
+    .banner::before{content:"▾";display:inline-block;transform:rotate(-90deg);font-weight:900}
+    .legend{display:flex;gap:18px;justify-content:center;font-size:13px;color:var(--muted);margin:8px 0 0}
+    .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}.blue{background:#3b82f6}.red{background:#ef4444}.green{background:#22c55e}
+    .list{display:grid;gap:10px;margin-top:10px}
+    .row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:12px;border-radius:10px;border:1px solid var(--ring);background:#fff}
+    .route{font-weight:700} .price{font-weight:800;font-size:18px;color:#1f2937}
+    .delta{font-weight:700;font-size:13px} .delta.down{color:var(--success)} .delta.up{color:var(--danger)}
+    .btn{border:0;border-radius:10px;padding:10px 12px;font-weight:700;color:#fff;background:var(--primary);text-decoration:none}
+    .tips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+    .tip{border:1px solid var(--ring);border-radius:12px;background:#fff;padding:14px}
+    .tip h4{margin:0 0 6px} .tip p{margin:0;color:var(--muted);font-size:14px} .tip .icon{font-size:20px;margin-right:6px}
+    .actions{display:flex;gap:10px;justify-content:center;margin-top:16px} .btn.secondary{background:#111827;color:#fff}
+    .badge{position:fixed;right:16px;top:50%;transform:translateY(-50%);background:#0f172a;color:#fff;font-size:12px;padding:8px 10px;border-radius:999px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="back" href="Homepage.html">Back</a>
+      <div class="brand"><img src="assets/airplane.png" alt="SmartLipad"><b>SmartLipad</b></div>
+      <a class="pill-ghost" href="#" title="Current page">Route Comparison</a>
+    </div>
+    <h1 class="title">Route Fare Comparison</h1>
+    <div class="subtitle">Compare prices across different routes and find the best deals</div>
+    <section class="card">
+      <div class="settings-grid">
+        <div class="inline"><label>Reference Date</label><div class="date-pill"><input type="date" id="refDate"></div></div>
+        <div>
+          <label style="color:#6b7280;font-size:14px">Select Routes to Compare (Choose up to 5)</label>
+          <div class="chips" id="routeChips">
+            <div class="chip" data-color="blue">Manila → Cebu</div>
+            <div class="chip red" data-color="red">Manila → Davao</div>
+            <div class="chip outline">Manila → Iloilo</div>
+            <div class="chip outline">Manila → Bacolod</div>
+            <div class="chip outline">Cebu → Manila</div>
+            <div class="chip green" data-color="green">Cebu → Davao</div>
+            <div class="chip outline">Davao → Manila</div>
+            <div class="chip outline">Davao → Cebu</div>
+            <div class="chip outline">Iloilo → Manila</div>
+          </div>
+          <div id="selCount" style="color:#6b7280;font-size:12px;margin-top:6px">3 routes selected</div>
+        </div>
+        <div class="banner" id="bestDeal">✓ Best Deal Found! — <span style="font-weight:700;margin-left:6px">Manila → Iloilo</span> is ₱210 cheaper than usual</div>
+      </div>
+    </section>
+    <section class="card section">
+      <h3 style="margin:0 0 6px">12-Month Price Comparison</h3>
+      <div style="color:#6b7280;font-size:13px;margin-bottom:8px">Compare fare trends across selected routes</div>
+      <canvas id="trendChart" height="110"></canvas>
+      <div class="legend"><span><span class="dot blue"></span>Manila → Cebu</span><span><span class="dot red"></span>Manila → Davao</span><span><span class="dot green"></span>Cebu → Davao</span></div>
+    </section>
+    <section class="card section">
+      <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:6px">
+        <div><h3 style="margin:0">Current Price Comparison</h3><div style="color:#6b7280;font-size:13px">All routes for <span id="dateLabel"></span></div></div>
+      </div>
+      <div class="list">
+        <div class="row"><div class="route">Manila → Cebu</div><div class="price">₱4,108 <span class="delta down">▼ ₱94</span></div><a class="btn" href="#">Book Now</a></div>
+        <div class="row"><div class="route">Manila → Davao</div><div class="price">₱5,486 <span class="delta down">▼ ₱157</span></div><a class="btn" href="#">Book Now</a></div>
+        <div class="row"><div class="route">Manila → Iloilo</div><div class="price">₱3,528 <span class="delta down">▼ ₱250</span></div><a class="btn" href="#">Book Now</a></div>
+        <div class="row"><div class="route">Manila → Bacolod</div><div class="price">₱3,779 <span class="delta down">▼ ₱199</span></div><a class="btn" href="#">Book Now</a></div>
+        <div class="row"><div class="route">Cebu → Manila</div><div class="price">₱3,954 <span class="delta down">▼ ₱204</span></div><a class="btn" href="#">Book Now</a></div>
+        <div class="row"><div class="route">Cebu → Davao</div><div class="price">₱3,066 <span class="delta down">▼ ₱92</span></div><a class="btn" href="#">Book Now</a></div>
+        <div class="row"><div class="route">Davao → Manila</div><div class="price">₱5,629 <span class="delta down">▼ ₱113</span></div><a class="btn" href="#">Book Now</a></div>
+        <div class="row"><div class="route">Davao → Cebu</div><div class="price">₱2,922 <span class="delta down">▼ ₱95</span></div><a class="btn" href="#">Book Now</a></div>
+        <div class="row"><div class="route">Iloilo → Manila</div><div class="price">₱3,833 <span class="delta up">▲ ₱15</span></div><a class="btn" href="#">Book Now</a></div>
+        <div class="row"><div class="route">Bacolod → Manila</div><div class="price">₱4,049 <span class="delta up">▲ ₱285</span></div><a class="btn" href="#">Book Now</a></div>
+      </div>
+    </section>
+    <section class="card section">
+      <h3 style="margin:0 0 10px">Money-Saving Tips</h3>
+      <div class="tips">
+        <div class="tip"><h4><span class="icon">💡</span>Book in Advance</h4><p>Book 2–3 months ahead for domestic flights to get better prices</p></div>
+        <div class="tip"><h4><span class="icon">🧭</span>Compare Routes</h4><p>Sometimes connecting flights can be cheaper than direct ones</p></div>
+        <div class="tip"><h4><span class="icon">📅</span>Flexible Dates</h4><p>Flying on weekdays is usually cheaper than weekends</p></div>
+        <div class="tip"><h4><span class="icon">⏰</span>Off-Peak Hours</h4><p>Early morning or late night flights often have lower prices</p></div>
+      </div>
+      <div class="actions"><a class="btn" href="Homepage.html">Search Flights</a><a class="btn secondary" href="predictions.html">View AI Predictions</a></div>
+    </section>
+    <div class="badge">Made by • you</div>
+  </div>
+  <script>
+    const ref=document.getElementById('refDate');const t=new Date();const pad=n=>String(n).padStart(2,'0');
+    ref.value=`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+    document.getElementById('dateLabel').textContent=t.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+  </script>
+</body>
+</html>
