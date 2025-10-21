@@ -8,11 +8,11 @@ from sqlalchemy import (
     DECIMAL, ForeignKey, CheckConstraint, UniqueConstraint, Index, JSON, CHAR
 )
 from sqlalchemy.orm import relationship
+from sqlalchemy.dialects.postgresql import JSONB
 from backend.database import Base
 
 
 class User(Base):
-    """User account model"""
     __tablename__ = "users"
     
     user_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -23,14 +23,12 @@ class User(Base):
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, onupdate=datetime.utcnow)
     
-    # Relationships
     roles = relationship("Role", secondary="user_role_map", back_populates="users")
     comparisons = relationship("UserComparison", back_populates="user", cascade="all, delete-orphan")
     forecast_runs = relationship("ForecastRun", back_populates="user")
 
 
 class Role(Base):
-    """User role model"""
     __tablename__ = "roles"
     
     role_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -38,12 +36,10 @@ class Role(Base):
     description = Column(Text)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     
-    # Relationships
     users = relationship("User", secondary="user_role_map", back_populates="roles")
 
 
 class UserRoleMap(Base):
-    """User-Role mapping table"""
     __tablename__ = "user_role_map"
     
     user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), primary_key=True)
@@ -52,7 +48,6 @@ class UserRoleMap(Base):
 
 
 class Airline(Base):
-    """Airline model"""
     __tablename__ = "airlines"
     
     airline_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -63,12 +58,10 @@ class Airline(Base):
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, onupdate=datetime.utcnow)
     
-    # Relationships
     fare_snapshots = relationship("FareSnapshot", back_populates="airline")
 
 
 class Airport(Base):
-    """Airport model"""
     __tablename__ = "airports"
     
     airport_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -82,13 +75,11 @@ class Airport(Base):
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, onupdate=datetime.utcnow)
     
-    # Relationships
     origin_routes = relationship("Route", foreign_keys="Route.origin_airport_id", back_populates="origin_airport")
     destination_routes = relationship("Route", foreign_keys="Route.destination_airport_id", back_populates="destination_airport")
 
 
 class Route(Base):
-    """Route model"""
     __tablename__ = "routes"
     __table_args__ = (
         UniqueConstraint("origin_airport_id", "destination_airport_id", name="ux_routes_origin_dest"),
@@ -103,7 +94,6 @@ class Route(Base):
     active = Column(Boolean, nullable=False, default=True)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     
-    # Relationships
     origin_airport = relationship("Airport", foreign_keys=[origin_airport_id], back_populates="origin_routes")
     destination_airport = relationship("Airport", foreign_keys=[destination_airport_id], back_populates="destination_routes")
     fare_snapshots = relationship("FareSnapshot", back_populates="route")
@@ -113,21 +103,18 @@ class Route(Base):
 
 
 class Currency(Base):
-    """Currency model"""
     __tablename__ = "currencies"
     
     currency_code = Column(CHAR(3), primary_key=True)
     name = Column(String(50), nullable=False)
     symbol = Column(String(5))
     
-    # Relationships
     fare_snapshots = relationship("FareSnapshot", back_populates="currency")
     forecast_results = relationship("ForecastResult", back_populates="currency")
     monthly_lowest_fares = relationship("MonthlyLowestFare", back_populates="currency")
 
 
 class DataSource(Base):
-    """Data source model for scrapers and APIs"""
     __tablename__ = "data_sources"
     __table_args__ = (
         CheckConstraint("type IN ('scraper','api')"),
@@ -135,20 +122,18 @@ class DataSource(Base):
     
     source_id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(80), unique=True, nullable=False)
-    type = Column(String(30), nullable=False)  # 'scraper' or 'api'
+    type = Column(String(30), nullable=False)
     base_url = Column(Text)
     terms_version = Column(String(50))
     active = Column(Boolean, nullable=False, default=True)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     updated_at = Column(TIMESTAMP, onupdate=datetime.utcnow)
     
-    # Relationships
     scrape_jobs = relationship("ScrapeJob", back_populates="source")
     fare_snapshots = relationship("FareSnapshot", back_populates="source")
 
 
 class ScrapeJob(Base):
-    """Scrape job model"""
     __tablename__ = "scrape_jobs"
     __table_args__ = (
         CheckConstraint("status IN ('queued','running','success','failed','partial')"),
@@ -166,13 +151,11 @@ class ScrapeJob(Base):
     error_message = Column(Text)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     
-    # Relationships
     source = relationship("DataSource", back_populates="scrape_jobs")
     logs = relationship("ScrapeJobLog", back_populates="job", cascade="all, delete-orphan")
 
 
 class ScrapeJobLog(Base):
-    """Scrape job log model"""
     __tablename__ = "scrape_job_logs"
     
     log_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -184,12 +167,10 @@ class ScrapeJobLog(Base):
     message = Column(Text)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     
-    # Relationships
     job = relationship("ScrapeJob", back_populates="logs")
 
 
 class FareSnapshot(Base):
-    """Fare snapshot model - stores scraped fare data"""
     __tablename__ = "fare_snapshots"
     __table_args__ = (
         UniqueConstraint("hash_signature", name="ux_fare_snapshots_hash"),
@@ -214,7 +195,6 @@ class FareSnapshot(Base):
     is_valid = Column(Boolean, nullable=False, default=True)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     
-    # Relationships
     route = relationship("Route", back_populates="fare_snapshots")
     airline = relationship("Airline", back_populates="fare_snapshots")
     source = relationship("DataSource", back_populates="fare_snapshots")
@@ -222,7 +202,6 @@ class FareSnapshot(Base):
 
 
 class ForecastRun(Base):
-    """Forecast run model"""
     __tablename__ = "forecast_runs"
     __table_args__ = (
         CheckConstraint("status IN ('running','success','failed','partial')"),
@@ -232,7 +211,7 @@ class ForecastRun(Base):
     
     forecast_run_id = Column(Integer, primary_key=True, autoincrement=True)
     model_name = Column(String(40), nullable=False)
-    run_scope = Column(String(20), nullable=False)  # 'all_routes', 'single_route', 'subset'
+    run_scope = Column(String(20), nullable=False)
     initiated_by = Column(Integer, ForeignKey("users.user_id", ondelete="SET NULL"))
     status = Column(String(20), nullable=False)
     train_start_date = Column(Date, nullable=False)
@@ -243,14 +222,12 @@ class ForecastRun(Base):
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     finished_at = Column(TIMESTAMP)
     
-    # Relationships
     user = relationship("User", back_populates="forecast_runs")
     results = relationship("ForecastResult", back_populates="forecast_run", cascade="all, delete-orphan")
     model_parameters = relationship("ModelParameter", back_populates="forecast_run", uselist=False, cascade="all, delete-orphan")
 
 
 class ModelParameter(Base):
-    """Model parameters for reproducibility"""
     __tablename__ = "model_parameters"
     
     model_param_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -259,12 +236,10 @@ class ModelParameter(Base):
     feature_list = Column(JSON)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     
-    # Relationships
     forecast_run = relationship("ForecastRun", back_populates="model_parameters")
 
 
 class ForecastResult(Base):
-    """Forecast result model"""
     __tablename__ = "forecast_results"
     __table_args__ = (
         CheckConstraint("target_period_start <= target_period_end"),
@@ -287,14 +262,12 @@ class ForecastResult(Base):
     is_cheapest_flag = Column(Boolean, nullable=False, default=False)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     
-    # Relationships
     forecast_run = relationship("ForecastRun", back_populates="results")
     route = relationship("Route", back_populates="forecast_results")
     currency = relationship("Currency", back_populates="forecast_results")
 
 
 class MonthlyLowestFare(Base):
-    """Monthly lowest fare model - historical minimums"""
     __tablename__ = "monthly_lowest_fares"
     __table_args__ = (
         CheckConstraint("observed_min_price >= 0"),
@@ -309,32 +282,25 @@ class MonthlyLowestFare(Base):
     sample_size = Column(Integer, nullable=False)
     last_computed_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     
-    # Relationships
     route = relationship("Route", back_populates="monthly_lowest_fares")
     currency = relationship("Currency", back_populates="monthly_lowest_fares")
 
 
 class UserComparison(Base):
-    """User comparison model - saved fare comparisons"""
     __tablename__ = "user_comparisons"
-    __table_args__ = (
-        CheckConstraint("JSON_VALID(months_compared)"),
-    )
     
     comparison_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, ForeignKey("users.user_id", ondelete="CASCADE"), nullable=False)
     route_id = Column(Integer, ForeignKey("routes.route_id", ondelete="RESTRICT"), nullable=False)
-    months_compared = Column(JSON, nullable=False)  # Array of 'YYYY-MM' strings
+    months_compared = Column(JSONB, nullable=False)
     notes = Column(Text)
     created_at = Column(TIMESTAMP, nullable=False, default=datetime.utcnow)
     
-    # Relationships
     user = relationship("User", back_populates="comparisons")
     route = relationship("Route", back_populates="user_comparisons")
 
 
 class APIRequestLog(Base):
-    """API request log model"""
     __tablename__ = "api_request_logs"
     
     api_log_id = Column(Integer, primary_key=True, autoincrement=True)
@@ -347,7 +313,6 @@ class APIRequestLog(Base):
 
 
 class ETLJobRun(Base):
-    """ETL job run model"""
     __tablename__ = "etl_job_runs"
     __table_args__ = (
         CheckConstraint("status IN ('queued','running','success','failed','partial')"),
