@@ -46,28 +46,177 @@
     <div class="topbar">
       <a class="back" href="search.html">Back</a>
       <div class="brand"><img src="assets/airplane.png" alt="SmartLipad logo"><b>SmartLipad</b></div>
-      <a class="tag" href="#">5 flights found</a>
+      <a class="tag" id="countTag" href="#">0 flights found</a>
     </div>
     <div class="bar">
-      <div class="chip">Manila → Cebu</div><span class="sep">•</span>
-      <div class="chip">Today</div><span class="sep">•</span>
-      <div class="chip">1 adult, Economy</div>
+      <div class="chip" id="routeChip">—</div><span class="sep">•</span>
+      <div class="chip" id="dateChip">—</div><span class="sep">•</span>
+      <div class="chip" id="paxChip">—</div>
       <div class="right">
         <label style="font-size:12px;color:#6b7280">Sort</label>
-        <select><option>Lowest price</option><option>Shortest duration</option><option>Earliest departure</option></select>
+        <select id="sortSel"><option value="price">Lowest price</option><option value="duration">Shortest duration</option><option value="depart">Earliest departure</option></select>
         <label style="font-size:12px;color:#6b7280">Stops</label>
-        <select><option>Any</option><option>Non-stop</option><option>1 stop</option></select>
+        <select id="stopsSel"><option value="any">Any</option><option value="0">Non-stop</option><option value="1">1 stop</option></select>
       </div>
     </div>
-    <div class="results">
-      <div class="card"><div><div class="air"><div class="logo" style="background:#ef4444">PR</div><div class="name">Philippine Airlines</div></div><div class="meta"><div class="time">06:00</div><div class="dur">1h 25m · A320</div><div class="time" style="text-align:right">07:25</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱3,650</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
-      <div class="card"><div><div class="air"><div class="logo" style="background:#0ea5e9">5J</div><div class="name">Cebu Pacific</div></div><div class="meta"><div class="time">08:15</div><div class="dur">1h 30m · A320</div><div class="time" style="text-align:right">09:45</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱3,890</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
-      <div class="card"><div><div class="air"><div class="logo" style="background:#10b981">DG</div><div class="name">CebGo</div></div><div class="meta"><div class="time">10:00</div><div class="dur">1h 35m · ATR 72</div><div class="time" style="text-align:right">11:35</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱3,950</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
-      <div class="card"><div><div class="air"><div class="logo" style="background:#f59e0b">2P</div><div class="name">PAL Express</div></div><div class="meta"><div class="time">12:40</div><div class="dur">1h 25m · A321</div><div class="time" style="text-align:right">14:05</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱4,280</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
-      <div class="card"><div><div class="air"><div class="logo" style="background:#64748b">Z2</div><div class="name">Philippines AirAsia</div></div><div class="meta"><div class="time">15:10</div><div class="dur">1h 30m · A320</div><div class="time" style="text-align:right">16:40</div></div><span class="stops">Non-stop • MNL → CEB</span></div><div class="pricebox"><div class="price">₱4,600</div><div class="deal">Deal</div><a class="btn" href="#">Book</a></div></div>
-    </div>
+    <div class="results" id="results"></div>
     <div class="tips"><h4>💡 Pro Tips</h4><p>Prices are generally lower when you book 1–2 months in advance. Try to avoid peak hours (5–9am & 5–9pm).</p></div>
     <div class="badge">Made by • you</div>
   </div>
+  <script src="assets/config.js"></script>
+<script src="assets/config.js"></script>
+<script src="assets/config.js"></script>
+<script>
+  function fmtCurrency(v, c) {
+    try { return (+v).toLocaleString("en-PH", { style: "currency", currency: c || "PHP" }); }
+    catch { return `₱${v}`; }
+  }
+
+  function toHHMM(t) {
+    if (!t) return "";
+    if (/^\d{2}:\d{2}$/.test(t)) return t;
+    const d = new Date(t);
+    if (isNaN(d)) return "";
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    return `${hh}:${mm}`;
+  }
+
+  function minutesFromISO(dur) {
+    if (!dur) return null;
+    let m = dur.match(/^PT(?:(\d+)H)?(?:(\d+)M)?$/i);
+    if (!m) {
+      m = dur.match(/^(?:(\d+)h)?(?:(\d+)m)?$/i);
+    }
+    if (!m) return null;
+    return (m[1] ? +m[1] * 60 : 0) + (m[2] ? +m[2] : 0);
+  }
+
+  function render(offers, origin, destination, currency) {
+    const wrap = document.getElementById("results");
+    wrap.innerHTML = "";
+    document.getElementById("countTag").textContent = `${offers.length} flights found`;
+
+    if (!offers.length) {
+      wrap.innerHTML = `<div class="tips"><h4>No offers</h4><p>Try another date or route.</p></div>`;
+      return;
+    }
+
+    for (const o of offers) {
+      const logoText = (o.airline_code || "XX").slice(0, 2).toUpperCase();
+      const airline   = o.airline_name || o.carrier || "Airline";
+      const dep       = toHHMM(o.departure_time);
+      const arr       = toHHMM(o.arrival_time);
+      const dur       = o.duration_human || o.duration || "";
+      const aircraft  = o.aircraft || "";
+      const stopsNum  = typeof o.stops === "number" ? o.stops : 0;
+      const stopsText = (stopsNum === 0) ? "Non-stop" : `${stopsNum} stop${stopsNum > 1 ? "s" : ""}`;
+      const price     = fmtCurrency(o.price, currency);
+      const link      = o.deeplink || "#";
+      const color     = "#2563eb";
+
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML =
+        `<div>
+          <div class="air">
+            <div class="logo" style="background:${color}">${logoText}</div>
+            <div class="name">${airline}</div>
+          </div>
+          <div class="meta">
+            <div class="time">${dep || "—"}</div>
+            <div class="dur">${dur}${aircraft ? ` · ${aircraft}` : ""}</div>
+            <div class="time" style="text-align:right">${arr || "—"}</div>
+          </div>
+          <span class="stops">${stopsText} • ${origin} → ${destination}</span>
+        </div>
+        <div class="pricebox">
+          <div class="price">${price}</div>
+          <a class="btn" href="${link}" target="_blank" rel="noopener">Book</a>
+        </div>`;
+      wrap.appendChild(card);
+    }
+  }
+
+  (async () => {
+    const p = new URLSearchParams(location.search);
+    const origin    = p.get("origin");
+    const destination = p.get("destination");
+    const date      = p.get("date");
+    const adults    = p.get("adults") || 1;
+    const currency  = p.get("currency") || "PHP";
+
+    document.getElementById("routeChip").textContent = `${origin} → ${destination}`;
+    document.getElementById("dateChip").textContent  = date || "—";
+    document.getElementById("paxChip").textContent   = `${adults} adult${adults > 1 ? "s" : ""}, Economy`;
+
+    const api = window.SMARTLIPAD.API_BASE;
+    const url = `${api}/flights/flight-offers?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&date=${encodeURIComponent(date)}&adults=${encodeURIComponent(adults)}&currency=${encodeURIComponent(currency)}`;
+
+    let data;
+    try {
+      const r = await fetch(url);
+      if (!r.ok) throw new Error(`${r.status} ${await r.text()}`);
+      data = await r.json();
+    } catch (e) {
+      console.error("Couldn’t load flights", e);
+      location.href = "error.html";
+      return;
+    }
+
+    const raw = Array.isArray(data) ? data : (Array.isArray(data.offers) ? data.offers : []);
+    const norm = raw.map(o => ({
+      airline_code: o.airline_code || o.validating_airline || o.carrierCode || "XX",
+      airline_name: o.airline_name || o.carrier || o.carrierName || o.validatingAirline || "Airline",
+      departure_time: o.departure_time,
+      arrival_time:   o.arrival_time,
+      duration:       o.duration,
+      duration_human: o.duration_human,
+      aircraft:       o.aircraft,
+      stops:          typeof o.stops === "number" ? o.stops : 0,
+      price:          o.price?.total || o.price,
+      deeplink:       o.deeplink || o.deep_link || "#",
+      itineraries:    o.itineraries || []
+    }));
+
+    const sortSel  = document.getElementById("sortSel");
+    const stopsSel = document.getElementById("stopsSel");
+
+    function apply() {
+      let arr = [...norm];
+      const stopsVal = stopsSel.value;
+      if (stopsVal !== "any") {
+        const n = +stopsVal;
+        arr = arr.filter(x => x.stops === n);
+      }
+      const key = sortSel.value;
+      if (key === "price") {
+        arr.sort((a, b) => (+a.price) - (+b.price));
+      } else if (key === "duration") {
+        arr.sort((a, b) =>
+          (minutesFromISO(a.duration) ?? 1e9) - (minutesFromISO(b.duration) ?? 1e9)
+        );
+      } else if (key === "depart") {
+        const toMin = t => {
+          if (!t) return 1e9;
+          if (/^\d{2}:\d{2}$/.test(t)) {
+            const [h, m] = t.split(":").map(Number);
+            return h * 60 + m;
+          }
+          const d = new Date(t);
+          return isNaN(d) ? 1e9 : d.getHours() * 60 + d.getMinutes();
+        };
+        arr.sort((a, b) => toMin(a.departure_time) - toMin(b.departure_time));
+      }
+      render(arr, origin, destination, currency);
+    }
+
+    sortSel.addEventListener("change", apply);
+    stopsSel.addEventListener("change", apply);
+    apply();
+  })();
+</script>
+
+
 </body>
 </html>

@@ -82,7 +82,7 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
       <img src="assets/airplane.png" alt="plane">
       <div class="route-meta">
         <div class="route-title">Current Route</div>
-        <div class="route-value" id="currentRoute">Manila → Cebu</div>
+        <div class="route-value" id="currentRoute">—</div>
       </div>
     </div>
     <div class="route-right"><img src="assets/brain_symbol.png" alt="ai small" style="width:20px;height:20px">AI Powered</div>
@@ -93,17 +93,17 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
       <div class="summary-left"><img src="assets/green_trend.png" alt="best"></div>
       <div class="summary-body">
         <div class="small-label">Best Time to Fly</div>
-        <div class="big-label" id="bestMonth" style="color:#10b981">Mar 2025</div>
-        <div class="price" id="bestPrice">₱2,650</div>
-        <div class="pill green" id="bestPill"><span id="savings">37% cheaper</span></div>
+        <div class="big-label" id="bestMonth" style="color:#10b981">—</div>
+        <div class="price" id="bestPrice">—</div>
+        <div class="pill green" id="bestPill"><span id="savings">—</span></div>
       </div>
     </div>
     <div class="summary-card">
       <div class="summary-left"><img src="assets/red_trend.png" alt="expensive"></div>
       <div class="summary-body">
         <div class="small-label">Most Expensive</div>
-        <div class="big-label" id="expMonth" style="color:#ef4444">Dec 2025</div>
-        <div class="price" id="expPrice">₱4,200</div>
+        <div class="big-label" id="expMonth" style="color:#ef4444">—</div>
+        <div class="price" id="expPrice">—</div>
         <div class="pill red" id="peakPill">Peak Season</div>
       </div>
     </div>
@@ -111,8 +111,8 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
       <div class="summary-left"><img src="assets/I_Button.png" alt="avg"></div>
       <div class="summary-body">
         <div class="small-label">Average Fare</div>
-        <div class="big-label" id="avgFare" style="color:#2563eb">₱3,250</div>
-        <div class="small-label">2025 Average</div>
+        <div class="big-label" id="avgFare" style="color:#2563eb">—</div>
+        <div class="small-label">12-Month Average</div>
         <div class="pill blue" id="yearPill">Yearly Trend</div>
       </div>
     </div>
@@ -144,14 +144,49 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
   </div>
 </div>
 
+<script src="assets/config.js"></script>
 <script>
-let lineChart, barChart
-const labels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-const values=[3000,2800,2650,2900,3100,3300,3500,3400,3200,3100,3000,3700]
-const ctx1=document.getElementById('lineChart').getContext('2d')
-const ctx2=document.getElementById('barChart').getContext('2d')
-lineChart=new Chart(ctx1,{type:'line',data:{labels,datasets:[{data:values,tension:.28,pointRadius:5,borderWidth:2.5,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.04)',pointBackgroundColor:'#2563eb'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}})
-barChart=new Chart(ctx2,{type:'bar',data:{labels,datasets:[{data:values,backgroundColor:'rgba(37,99,235,0.9)',borderRadius:8,maxBarThickness:48}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}})
+(async()=>{
+  const p=new URLSearchParams(location.search);
+  const originLabel=p.get("origin")||"Manila (MNL)";
+  const destLabel=p.get("destination")||"Cebu (CEB)";
+  const iata=(s)=>{const m=(s||"").match(/([A-Z]{3})\)?$/);return m?m[1]:s};
+  const origin=iata(originLabel);
+  const destination=iata(destLabel);
+  document.getElementById("currentRoute").textContent=`${origin} → ${destination}`;
+
+  const url=`${SMARTLIPAD.API_BASE}/flights/predictions?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`;
+  let data={};
+  try{
+    const r=await fetch(url);
+    if(!r.ok)throw new Error(await r.text());
+    data=await r.json();
+  }catch(e){
+    console.error(e);
+    return;
+  }
+
+  if(!data.monthly_forecast)return;
+  const months=data.monthly_forecast.map(m=>m.month);
+  const fares=data.monthly_forecast.map(m=>m.avg_fare);
+
+  const best=data.best_time||{};
+  const worst=data.most_expensive||{};
+  const avg=data.avg_fare||0;
+
+  document.getElementById("bestMonth").textContent=best.month||"—";
+  document.getElementById("bestPrice").textContent=best.price?`₱${Number(best.price).toLocaleString()}`:"—";
+  document.getElementById("savings").textContent=best.savings||"—";
+  document.getElementById("expMonth").textContent=worst.month||"—";
+  document.getElementById("expPrice").textContent=worst.price?`₱${Number(worst.price).toLocaleString()}`:"—";
+  document.getElementById("avgFare").textContent=avg?`₱${Number(avg).toLocaleString()}`:"—";
+
+  const ctx1=document.getElementById('lineChart').getContext('2d');
+  const ctx2=document.getElementById('barChart').getContext('2d');
+  new Chart(ctx1,{type:'line',data:{labels:months,datasets:[{data:fares,borderWidth:2.5,tension:.3,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.04)',pointBackgroundColor:'#2563eb'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  new Chart(ctx2,{type:'bar',data:{labels:months,datasets:[{data:fares,backgroundColor:'rgba(37,99,235,0.9)',borderRadius:8,maxBarThickness:48}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+})();
 </script>
+
 </body>
 </html>

@@ -27,26 +27,9 @@
     label{font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px;display:block}
     select,.input{width:100%;border:1px solid var(--ring);border-radius:10px;background:#fff;padding:12px;font:inherit}
     .btn-primary{margin:12px auto 0;display:inline-flex;gap:8px;align-items:center;justify-content:center;padding:12px 18px;border-radius:999px;background:var(--primary);color:#fff;font-weight:800;border:0;cursor:pointer;box-shadow:var(--shadow)}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:820px;margin:14px auto 0}
-    .panel{border:1px solid var(--ring);border-radius:12px;background:#fff;padding:14px}
-    .panel h4{margin:0 0 10px;font-size:16px;display:flex;align-items:center;gap:8px}
-    .chip{background:#ecfdf5;border:1px solid #bbf7d0;color:#047857;font-weight:700;border-radius:999px;padding:4px 8px;font-size:12px}
-    .stats{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
-    .stats .label{color:var(--muted)}
-    .panel .list{list-style:none;padding-left:0;margin:0;display:grid;gap:8px}
-    .list li{display:flex;align-items:center;gap:10px;color:#1f2937;font-size:14px}
-    .panel .ghost{width:100%;border:1px solid var(--ring);border-radius:8px;height:36px;background:#f8fafc;display:flex;align-items:center;justify-content:center;font-weight:700;color:#0f172a;text-decoration:none}
-    .section{max-width:820px;margin:14px auto 0}
-    .section h3{margin:0 0 12px}
-    .routes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-    .route{border:1px solid var(--ring);border-radius:12px;background:#fff;padding:12px;display:grid;gap:6px}
-    .route .head{font-weight:700}
-    .route .price{font-weight:800}
-    .route .delta{font-weight:700;font-size:12px}
-    .up{color:#ef4444}.down{color:#16a34a}.flat{color:#94a3b8}
     .badge{position:fixed;right:18px;bottom:18px;background:#0f172a;color:#fff;padding:8px 10px;border-radius:10px;font-size:12px;box-shadow:var(--shadow)}
-    @media (max-width:960px){.inputs{grid-template-columns:1fr 1fr}.routes{grid-template-columns:1fr 1fr}}
-    @media (max-width:640px){.inputs{grid-template-columns:1fr}.routes{grid-template-columns:1fr}}
+    @media (max-width:960px){.inputs{grid-template-columns:1fr 1fr}}
+    @media (max-width:640px){.inputs{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -121,7 +104,6 @@
           <label for="to">To</label>
           <select id="to" required>
             <option value="" disabled selected>Select destination</option>
-            <!-- same list as from -->
             <option>Manila (Ninoy Aquino Intl – MNL)</option>
             <option>Clark (Clark Intl – CRK)</option>
             <option>Subic (Subic Bay Intl – SFS)</option>
@@ -171,8 +153,88 @@
         </div>
       </div>
 
-      <button class="btn-primary" onclick="window.location.href='results.html'">Search Flights</button>
+      <button class="btn-primary" id="searchBtn">Search Flights</button>
     </section>
   </div>
+  <script>
+    window.SMARTLIPAD={API_BASE:"http://localhost:8000/api"};
+
+    function toIATA(label){
+      const endCode=(label||"").match(/\b([A-Z]{3})\b\)?\s*$/);
+      return endCode?endCode[1]:"";
+    }
+
+    function q(obj){
+      return Object.entries(obj)
+        .filter(([,v])=>v!==undefined&&v!==null&&v!=="")
+        .map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+        .join("&");
+    }
+
+    function findOptionByCode(select, code){
+      const opts=[...select.options];
+      return opts.find(o=>{
+        const m=o.textContent.match(/\b([A-Z]{3})\b\)?\s*$/);
+        return m && m[1]===code;
+      }) || null;
+    }
+
+    function selectByGuess(select, value){
+      if(!value) return;
+      const val=value.trim();
+      const codeFromParens=(val.match(/\(([A-Z]{3})\)/)||[])[1];
+      const codeAtEnd=(val.match(/\b([A-Z]{3})\b$/)||[])[1];
+      const pureCode=(/^[A-Z]{3}$/).test(val)?val:null;
+      const code=pureCode||codeFromParens||codeAtEnd||"";
+      let opt=null;
+      if(code){ opt=findOptionByCode(select, code); }
+      if(!opt){ opt=[...select.options].find(o=>o.textContent.trim()===val); }
+      if(!opt && code){ opt=[...select.options].find(o=>o.textContent.includes(code)); }
+      if(opt){ select.value=opt.value; }
+    }
+
+    (function prefill(){
+      const p=new URLSearchParams(location.search);
+      let origin=p.get("origin")||p.get("from");
+      let destination=p.get("destination")||p.get("to");
+      let depart=p.get("depart")||p.get("depart_date")||p.get("date");
+
+      if(!origin||!destination){
+        try{
+          const saved=JSON.parse(localStorage.getItem("sl_search")||"{}");
+          origin=origin||saved.origin;
+          destination=destination||saved.destination;
+          depart=depart||saved.date;
+        }catch{}
+      }
+
+      const fromSel=document.getElementById("from");
+      const toSel=document.getElementById("to");
+      const dateInp=document.getElementById("date");
+
+      selectByGuess(fromSel, origin);
+      selectByGuess(toSel, destination);
+
+      if(depart){
+        if(/^\d{4}-\d{2}-\d{2}$/.test(depart)){ dateInp.value=depart; }
+        else{
+          const m=depart.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+          if(m){ dateInp.value=`${m[3]}-${m[2]}-${m[1]}`; }
+        }
+      }
+    })();
+
+    document.getElementById("searchBtn").addEventListener("click",()=>{
+      const from=document.getElementById("from").value;
+      const to=document.getElementById("to").value;
+      const date=document.getElementById("date").value;
+      const origin=toIATA(from);
+      const destination=toIATA(to);
+      if(!origin||!destination||!date){ window.location.href="error.html"; return; }
+      const qs=q({origin,destination,date,adults:1,currency:"PHP"});
+      localStorage.setItem("sl_search",JSON.stringify({origin,destination,date}));
+      window.location.href=`results.html?${qs}`;
+    });
+  </script>
 </body>
 </html>

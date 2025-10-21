@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SmartLipad – Route Fare Comparison</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     :root{--bg:#f6f7fb;--card:#ffffff;--text:#0f172a;--muted:#6b7280;--ring:#e5e7eb;--primary:#2563eb;--success:#16a34a;--danger:#dc2626;--chip:#eff6ff}
     *{box-sizing:border-box} html,body{margin:0;padding:0}
@@ -32,8 +32,8 @@
     .chip.red{background:#fee2e2;color:#991b1b} .chip.green{background:#dcfce7;color:#14532d} .chip.outline{background:#fff;color:#334155}
     .banner{margin-top:10px;border-radius:10px;border:1px solid #d1fae5;background:#ecfdf5;padding:10px 12px;color:#065f46;font-weight:600;display:flex;align-items:center;gap:10px}
     .banner::before{content:"▾";display:inline-block;transform:rotate(-90deg);font-weight:900}
-    .legend{display:flex;gap:18px;justify-content:center;font-size:13px;color:var(--muted);margin:8px 0 0}
-    .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}.blue{background:#3b82f6}.red{background:#ef4444}.green{background:#22c55e}
+    .legend{display:flex;gap:18px;justify-content:center;font-size:13px;color:var(--muted);margin:8px 0 0;flex-wrap:wrap}
+    .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
     .list{display:grid;gap:10px;margin-top:10px}
     .row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:12px;border-radius:10px;border:1px solid var(--ring);background:#fff}
     .route{font-weight:700} .price{font-weight:800;font-size:18px;color:#1f2937}
@@ -44,6 +44,8 @@
     .tip h4{margin:0 0 6px} .tip p{margin:0;color:var(--muted);font-size:14px} .tip .icon{font-size:20px;margin-right:6px}
     .actions{display:flex;gap:10px;justify-content:center;margin-top:16px} .btn.secondary{background:#111827;color:#fff}
     .badge{position:fixed;right:16px;top:50%;transform:translateY(-50%);background:#0f172a;color:#fff;font-size:12px;padding:8px 10px;border-radius:999px}
+    @media (max-width:900px){.chips{grid-template-columns:repeat(2,minmax(0,1fr))}.tips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:600px){.chips{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:8px}.actions{flex-direction:column}}
   </style>
 </head>
 <body>
@@ -53,52 +55,52 @@
       <div class="brand"><img src="assets/airplane.png" alt="SmartLipad"><b>SmartLipad</b></div>
       <a class="pill-ghost" href="#" title="Current page">Route Comparison</a>
     </div>
+
     <h1 class="title">Route Fare Comparison</h1>
     <div class="subtitle">Compare prices across different routes and find the best deals</div>
+
     <section class="card">
       <div class="settings-grid">
-        <div class="inline"><label>Reference Date</label><div class="date-pill"><input type="date" id="refDate"></div></div>
+        <div class="inline">
+          <label>Reference Date</label>
+          <div class="date-pill"><input type="date" id="refDate"></div>
+        </div>
         <div>
           <label style="color:#6b7280;font-size:14px">Select Routes to Compare (Choose up to 5)</label>
           <div class="chips" id="routeChips">
-            <div class="chip" data-color="blue">Manila → Cebu</div>
-            <div class="chip red" data-color="red">Manila → Davao</div>
-            <div class="chip outline">Manila → Iloilo</div>
-            <div class="chip outline">Manila → Bacolod</div>
-            <div class="chip outline">Cebu → Manila</div>
-            <div class="chip green" data-color="green">Cebu → Davao</div>
-            <div class="chip outline">Davao → Manila</div>
-            <div class="chip outline">Davao → Cebu</div>
-            <div class="chip outline">Iloilo → Manila</div>
+            <div class="chip" data-origin="MNL" data-destination="CEB" data-color="blue">Manila → Cebu</div>
+            <div class="chip red" data-origin="MNL" data-destination="DVO" data-color="red">Manila → Davao</div>
+            <div class="chip outline" data-origin="MNL" data-destination="ILO">Manila → Iloilo</div>
+            <div class="chip outline" data-origin="MNL" data-destination="BCD">Manila → Bacolod</div>
+            <div class="chip outline" data-origin="CEB" data-destination="MNL">Cebu → Manila</div>
+            <div class="chip green" data-origin="CEB" data-destination="DVO" data-color="green">Cebu → Davao</div>
+            <div class="chip outline" data-origin="DVO" data-destination="MNL">Davao → Manila</div>
+            <div class="chip outline" data-origin="DVO" data-destination="CEB">Davao → Cebu</div>
+            <div class="chip outline" data-origin="ILO" data-destination="MNL">Iloilo → Manila</div>
           </div>
           <div id="selCount" style="color:#6b7280;font-size:12px;margin-top:6px">3 routes selected</div>
         </div>
-        <div class="banner" id="bestDeal">✓ Best Deal Found! — <span style="font-weight:700;margin-left:6px">Manila → Iloilo</span> is ₱210 cheaper than usual</div>
+        <div class="banner" id="bestDeal">✓ Best Deal Found! — <span id="bestDealText" style="font-weight:700;margin-left:6px">Loading…</span></div>
       </div>
     </section>
+
     <section class="card section">
       <h3 style="margin:0 0 6px">12-Month Price Comparison</h3>
       <div style="color:#6b7280;font-size:13px;margin-bottom:8px">Compare fare trends across selected routes</div>
       <canvas id="trendChart" height="110"></canvas>
-      <div class="legend"><span><span class="dot blue"></span>Manila → Cebu</span><span><span class="dot red"></span>Manila → Davao</span><span><span class="dot green"></span>Cebu → Davao</span></div>
+      <div id="legend" class="legend"></div>
     </section>
+
     <section class="card section">
       <div style="display:flex;justify-content:space-between;align-items:end;margin-bottom:6px">
-        <div><h3 style="margin:0">Current Price Comparison</h3><div style="color:#6b7280;font-size:13px">All routes for <span id="dateLabel"></span></div></div>
+        <div>
+          <h3 style="margin:0">Current Price Comparison</h3>
+          <div style="color:#6b7280;font-size:13px">All routes for <span id="dateLabel"></span></div>
+        </div>
       </div>
-      <div class="list">
-        <div class="row"><div class="route">Manila → Cebu</div><div class="price">₱4,108 <span class="delta down">▼ ₱94</span></div><a class="btn" href="#">Book Now</a></div>
-        <div class="row"><div class="route">Manila → Davao</div><div class="price">₱5,486 <span class="delta down">▼ ₱157</span></div><a class="btn" href="#">Book Now</a></div>
-        <div class="row"><div class="route">Manila → Iloilo</div><div class="price">₱3,528 <span class="delta down">▼ ₱250</span></div><a class="btn" href="#">Book Now</a></div>
-        <div class="row"><div class="route">Manila → Bacolod</div><div class="price">₱3,779 <span class="delta down">▼ ₱199</span></div><a class="btn" href="#">Book Now</a></div>
-        <div class="row"><div class="route">Cebu → Manila</div><div class="price">₱3,954 <span class="delta down">▼ ₱204</span></div><a class="btn" href="#">Book Now</a></div>
-        <div class="row"><div class="route">Cebu → Davao</div><div class="price">₱3,066 <span class="delta down">▼ ₱92</span></div><a class="btn" href="#">Book Now</a></div>
-        <div class="row"><div class="route">Davao → Manila</div><div class="price">₱5,629 <span class="delta down">▼ ₱113</span></div><a class="btn" href="#">Book Now</a></div>
-        <div class="row"><div class="route">Davao → Cebu</div><div class="price">₱2,922 <span class="delta down">▼ ₱95</span></div><a class="btn" href="#">Book Now</a></div>
-        <div class="row"><div class="route">Iloilo → Manila</div><div class="price">₱3,833 <span class="delta up">▲ ₱15</span></div><a class="btn" href="#">Book Now</a></div>
-        <div class="row"><div class="route">Bacolod → Manila</div><div class="price">₱4,049 <span class="delta up">▲ ₱285</span></div><a class="btn" href="#">Book Now</a></div>
-      </div>
+      <div id="priceList" class="list"></div>
     </section>
+
     <section class="card section">
       <h3 style="margin:0 0 10px">Money-Saving Tips</h3>
       <div class="tips">
@@ -109,12 +111,204 @@
       </div>
       <div class="actions"><a class="btn" href="Homepage.html">Search Flights</a><a class="btn secondary" href="predictions.html">View AI Predictions</a></div>
     </section>
+
     <div class="badge">Made by • you</div>
   </div>
+
+  <script src="assets/config.js"></script>
   <script>
-    const ref=document.getElementById('refDate');const t=new Date();const pad=n=>String(n).padStart(2,'0');
-    ref.value=`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
-    document.getElementById('dateLabel').textContent=t.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+    const refInput = document.getElementById('refDate');
+    const dateLabel = document.getElementById('dateLabel');
+    const chips = Array.from(document.querySelectorAll('#routeChips .chip'));
+    const selCount = document.getElementById('selCount');
+    const bestDealBox = document.getElementById('bestDeal');
+    const bestDealText = document.getElementById('bestDealText');
+    const priceList = document.getElementById('priceList');
+    const legendBox = document.getElementById('legend');
+    let chart;
+
+    const palette = [
+      '#2563eb','#ef4444','#22c55e','#a855f7','#f59e0b',
+      '#0ea5e9','#10b981','#e11d48','#7c3aed','#84cc16'
+    ];
+
+    function initDate() {
+      const t = new Date();
+      const pad = n => String(n).padStart(2,'0');
+      refInput.value = `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
+      dateLabel.textContent = t.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+    }
+
+    function getSelectedRoutes() {
+      return chips.filter(c => !c.classList.contains('outline')).slice(0,5).map(c => ({
+        origin: c.dataset.origin,
+        destination: c.dataset.destination,
+        label: c.textContent.trim()
+      }));
+    }
+
+    function updateSelCount() {
+      selCount.textContent = `${getSelectedRoutes().length} routes selected`;
+    }
+
+    function toggleChip(e) {
+      const el = e.currentTarget;
+      const selected = getSelectedRoutes().map(r => r.label);
+      if (el.classList.contains('outline')) {
+        if (selected.length >= 5) return;
+        el.classList.remove('outline');
+      } else {
+        el.classList.add('outline');
+      }
+      updateSelCount();
+      fetchAndRender();
+    }
+
+    chips.forEach(chip => chip.addEventListener('click', toggleChip));
+
+    refInput.addEventListener('change', () => {
+      const d = new Date(refInput.value);
+      if (!isNaN(d)) {
+        dateLabel.textContent = d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+      }
+      fetchAndRender();
+    });
+
+   function buildQuery() {
+    const routes = getSelectedRoutes().map(r => `${r.origin}-${r.destination}`).join(',');
+    const ref = refInput.value;
+    return `${SMARTLIPAD.API_BASE}/flights/compare/monthly?routes=${encodeURIComponent(routes)}&ref_date=${encodeURIComponent(ref)}`;
+    }
+
+    async function fetchAndRender() {
+      const url = buildQuery();
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        renderAll(data);
+      } catch (err) {
+        bestDealText.textContent = 'Unable to load comparison right now';
+        priceList.innerHTML = '';
+        renderChart({routes:[]});
+        console.error(err);
+      }
+    }
+
+    function renderAll(data) {
+      renderBestDeal(data);
+      renderList(data);
+      renderChart(data);
+    }
+
+    function renderBestDeal(data) {
+      const best = data?.best_deal;
+      if (best && best.route && best.cheaper_by != null) {
+        bestDealText.textContent = `${labelFromRoute(best.route)} is ₱${Number(best.cheaper_by).toLocaleString()} cheaper than usual`;
+      } else {
+        bestDealText.textContent = 'Select routes to see today’s best deal';
+      }
+    }
+
+    function renderList(data) {
+      const rows = (data?.routes || []).map(r => {
+        const routeLabel = labelFromRoute(r.route);
+        const price = r.current_price != null ? `₱${Number(r.current_price).toLocaleString()}` : '—';
+        const delta = Number(r.delta_vs_avg || 0);
+        const deltaText = delta === 0 ? '' : (delta < 0 ? `<span class="delta down">▼ ₱${Math.abs(delta).toLocaleString()}</span>` : `<span class="delta up">▲ ₱${Math.abs(delta).toLocaleString()}</span>`);
+        const [o, d] = r.route.split('-');
+        const ref = refInput.value;
+        const link = `results.html?origin=${o}&destination=${d}&depart=${encodeURIComponent(ref)}`;
+        return `
+          <div class="row">
+            <div class="route">${routeLabel}</div>
+            <div class="price">${price} ${deltaText}</div>
+            <a class="btn" href="${link}">Book Now</a>
+          </div>
+        `;
+      }).join('');
+      priceList.innerHTML = rows || '<div style="color:#6b7280">No routes selected.</div>';
+    }
+
+    function renderChart(data) {
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      if (chart) { chart.destroy(); }
+      const routeBlocks = (data?.routes || []);
+      const monthLabels = unifyMonths(routeBlocks);
+      const datasets = routeBlocks.map((r, idx) => {
+        const color = palette[idx % palette.length];
+        const map = new Map((r.series || []).map(p => [p.month, Number(p.price)]));
+        const series = monthLabels.map(m => map.get(m) ?? null);
+        return {
+          label: labelFromRoute(r.route),
+          data: series,
+          borderColor: color,
+          backgroundColor: hexToRGBA(color, 0.12),
+          pointBackgroundColor: color,
+          tension: .3,
+          borderWidth: 2
+        };
+      });
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: monthLabels.map(m => monthToShort(m)), datasets },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } } }
+      });
+
+      legendBox.innerHTML = routeBlocks.map((r, idx) => {
+        const color = palette[idx % palette.length];
+        return `<span><span class="dot" style="background:${color}"></span>${labelFromRoute(r.route)}</span>`;
+      }).join('');
+    }
+
+    function unifyMonths(routeBlocks) {
+      const set = new Set();
+      routeBlocks.forEach(r => (r.series||[]).forEach(p => set.add(p.month)));
+      return Array.from(set).sort();
+    }
+
+    function monthToShort(ym) {
+      const [y, m] = ym.split('-').map(Number);
+      const d = new Date(y, m-1, 1);
+      return d.toLocaleDateString(undefined, { month: 'short', year:'2-digit' });
+    }
+
+    function labelFromRoute(route) {
+      const [o,d] = route.split('-');
+      const map = {
+        MNL:'Manila', CEB:'Cebu', DVO:'Davao', ILO:'Iloilo', BCD:'Bacolod',
+        CRK:'Clark', KLO:'Kalibo', MPH:'Caticlan', TAG:'Bohol'
+      };
+      return `${map[o]||o} → ${map[d]||d}`;
+    }
+
+    function hexToRGBA(hex, a=0.2){
+      const c = hex.replace('#','');
+      const n = parseInt(c,16);
+      const r = (n>>16)&255, g=(n>>8)&255, b=n&255;
+      return `rgba(${r},${g},${b},${a})`;
+    }
+
+    function initFromURL() {
+      const p = new URLSearchParams(location.search);
+      const routes = (p.get('routes')||'').split(',').filter(Boolean);
+      const ref = p.get('ref_date');
+      if (ref) refInput.value = ref;
+      if (routes.length) {
+        chips.forEach(c => {
+          const key = `${c.dataset.origin}-${c.dataset.destination}`;
+          if (routes.includes(key)) c.classList.remove('outline'); else c.classList.add('outline');
+        });
+      } else {
+        chips.forEach((c,i)=>{ if(i<3) c.classList.remove('outline'); else c.classList.add('outline'); });
+      }
+      updateSelCount();
+    }
+
+    initDate();
+    initFromURL();
+    fetchAndRender();
   </script>
 </body>
 </html>
