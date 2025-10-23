@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SmartLipad – Home</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    .swap-img { width: 18px; height: 18px; transform: rotate(180deg); }
+  </style>
+</head>
+
+<body class="bg-gradient-to-b from-blue-50 via-white to-blue-50 min-h-screen flex flex-col">
+  <header class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
+      <div class="flex items-center space-x-2">
+        <img src="assets/airplane.png" alt="SmartLipad logo" class="w-6 h-6">
+        <h1 class="text-lg font-bold text-gray-800">SmartLipad</h1>
+      </div>
+      <nav class="space-x-6 text-gray-600 font-medium">
+        <a href="index.html" class="text-blue-600 font-semibold">Home</a>
+        <a href="search.html" class="hover:text-blue-600">Search</a>
+        <a href="predictions.html" class="hover:text-blue-600">Predictions</a>
+        <a href="compare.html" class="hover:text-blue-600">Compare</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="flex-grow">
+    <div class="max-w-4xl mx-auto px-6 text-center py-12 md:py-16">
+      <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">
+        Smart Flight Booking with <span class="text-blue-600">AI Predictions</span>
+      </h1>
+      <p class="text-gray-600 mb-8 md:mb-10">
+        Find the best flight deals and predict future fare trends with our AI-powered platform.
+      </p>
+
+      <section class="bg-white shadow-lg rounded-xl p-5 md:p-6 max-w-3xl mx-auto">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label for="from" class="block text-[12px] font-semibold text-gray-500 mb-1 uppercase tracking-wide">From</label>
+            <select id="from" required class="border rounded-md px-3 py-2 w-full text-gray-700">
+              <option value="" disabled selected>Select origin</option>
+              <option>Manila (Ninoy Aquino Intl – MNL)</option>
+              <option>Clark (Clark Intl – CRK)</option>
+              <option>Subic (Subic Bay Intl – SFS)</option>
+              <option>Laoag (Laoag Intl – LAO)</option>
+              <option>Baguio (Loakan Airport – BAG)</option>
+              <option>Naga (Naga Airport – WNP)</option>
+              <option>Legazpi (Bicol Intl – LGP)</option>
+              <option>Virac (Virac Airport – VRC)</option>
+              <option>San Jose (San Jose – SJI)</option>
+              <option>Masbate (Masbate – MBT)</option>
+              <option>Basco (Basco – BSO)</option>
+              <option>Baler (Baler – BQA)</option>
+              <option>Cebu (Mactan–Cebu Intl – CEB)</option>
+              <option>Iloilo (Iloilo Intl – ILO)</option>
+              <option>Bacolod (Bacolod–Silay – BCD)</option>
+              <option>Kalibo (Kalibo – KLO)</option>
+              <option>Caticlan/Boracay (Godofredo P. Ramos – MPH)</option>
+              <option>Roxas (Roxas – RXS)</option>
+              <option>Tacloban (Daniel Z. Romualdez – TAC)</option>
+              <option>Ormoc (Ormoc – OMC)</option>
+              <option>Catarman (Catarman – CRM)</option>
+              <option>Bohol (Panglao – TAG)</option>
+              <option>Davao (Francisco Bangoy Intl – DVO)</option>
+              <option>Cagayan de Oro (Laguindingan – CGY)</option>
+              <option>General Santos (General Santos – GES)</option>
+              <option>Zamboanga (Zamboanga Intl – ZAM)</option>
+              <option>Butuan (Bancasi – BXU)</option>
+              <option>Dipolog (Dipolog – DPL)</option>
+              <option>Ozamiz (Labo – OZC)</option>
+              <option>Surigao (Surigao – SUG)</option>
+              <option>Siargao (Sayak – IAO)</option>
+              <option>Cotabato (Awang – CBO)</option>
+              <option>Pagadian (Pagadian – PAG)</option>
+              <option>Camiguin (Mambajao – CGM)</option>
+              <option>Jolo (Jolo – JOL)</option>
+              <option>Tawi-Tawi (Sanga-Sanga – TWT)</option>
+              <option>Puerto Princesa (Puerto Princesa Intl – PPS)</option>
+              <option>Coron (Busuanga – USU)</option>
+              <option>El Nido (Lio – ENI)</option>
+              <option>San Vicente (San Vicente – SWL)</option>
+            </select>
+          </div>
+
+          <div class="flex items-end justify-center md:justify-center">
+            <button id="swapBtn" type="button" title="Swap origin and destination"
+              class="w-full md:w-auto border rounded-md px-3 py-2 flex items-center justify-center bg-gray-50 hover:bg-gray-100">
+              <img src="assets/left_arrow.png" alt="Swap" class="swap-img">
+              <span class="sr-only">Swap</span>
+            </button>
+          </div>
+
+          <div>
+            <label for="to" class="block text-[12px] font-semibold text-gray-500 mb-1 uppercase tracking-wide">To</label>
+            <select id="to" required class="border rounded-md px-3 py-2 w-full text-gray-700">
+              <option value="" disabled selected>Select destination</option>
+              <option>Manila (Ninoy Aquino Intl – MNL)</option>
+              <option>Clark (Clark Intl – CRK)</option>
+              <option>Subic (Subic Bay Intl – SFS)</option>
+              <option>Laoag (Laoag Intl – LAO)</option>
+              <option>Baguio (Loakan Airport – BAG)</option>
+              <option>Naga (Naga Airport – WNP)</option>
+              <option>Legazpi (Bicol Intl – LGP)</option>
+              <option>Virac (Virac Airport – VRC)</option>
+              <option>San Jose (San Jose – SJI)</option>
+              <option>Masbate (Masbate – MBT)</option>
+              <option>Basco (Basco – BSO)</option>
+              <option>Baler (Baler – BQA)</option>
+              <option>Cebu (Mactan–Cebu Intl – CEB)</option>
+              <option>Iloilo (Iloilo Intl – ILO)</option>
+              <option>Bacolod (Bacolod–Silay – BCD)</option>
+              <option>Kalibo (Kalibo – KLO)</option>
+              <option>Caticlan/Boracay (Godofredo P. Ramos – MPH)</option>
+              <option>Roxas (Roxas – RXS)</option>
+              <option>Tacloban (Daniel Z. Romualdez – TAC)</option>
+              <option>Ormoc (Ormoc – OMC)</option>
+              <option>Catarman (Catarman – CRM)</option>
+              <option>Bohol (Panglao – TAG)</option>
+              <option>Davao (Francisco Bangoy Intl – DVO)</option>
+              <option>Cagayan de Oro (Laguindingan – CGY)</option>
+              <option>General Santos (General Santos – GES)</option>
+              <option>Zamboanga (Zamboanga Intl – ZAM)</option>
+              <option>Butuan (Bancasi – BXU)</option>
+              <option>Dipolog (Dipolog – DPL)</option>
+              <option>Ozamiz (Labo – OZC)</option>
+              <option>Surigao (Surigao – SUG)</option>
+              <option>Siargao (Sayak – IAO)</option>
+              <option>Cotabato (Awang – CBO)</option>
+              <option>Pagadian (Pagadian – PAG)</option>
+              <option>Camiguin (Mambajao – CGM)</option>
+              <option>Jolo (Jolo – JOL)</option>
+              <option>Tawi-Tawi (Sanga-Sanga – TWT)</option>
+              <option>Puerto Princesa (Puerto Princesa Intl – PPS)</option>
+              <option>Coron (Busuanga – USU)</option>
+              <option>El Nido (Lio – ENI)</option>
+              <option>San Vicente (San Vicente – SWL)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <div>
+            <label for="depart" class="block text-[12px] font-semibold text-gray-500 mb-1 uppercase tracking-wide">Departure</label>
+            <input id="depart" type="date" class="border rounded-md px-3 py-2 w-full text-gray-700" />
+          </div>
+          <div>
+            <label for="return" class="block text-[12px] font-semibold text-gray-500 mb-1 uppercase tracking-wide">Return (optional)</label>
+            <input id="return" type="date" class="border rounded-md px-3 py-2 w-full text-gray-700" />
+          </div>
+          <div class="flex items-end">
+            <button id="searchBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-md">
+              Search Flights
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="max-w-6xl mx-auto px-6 pb-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-green-700 font-semibold">
+              <span class="text-lg">↘</span><span>Best Time to Fly</span>
+            </div>
+            <button id="btnFetchBest" class="text-sm px-3 py-1.5 border rounded-md hover:bg-gray-50">Search</button>
+          </div>
+          <div class="mt-3 text-3xl font-extrabold text-gray-900" id="bestMonthHome">—</div>
+          <div class="mt-1 text-gray-500" id="bestAvgHome">—</div>
+          <button id="btnBestTime"
+            class="mt-5 w-full border rounded-md py-2 font-semibold hover:bg-gray-50">
+            View Full Predictions
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
+        <div class="p-6">
+          <div class="flex items-center gap-2 text-blue-700 font-semibold">
+            <span class="text-lg">🔎</span><span>Smart Search</span>
+          </div>
+          <p class="mt-3 text-gray-700">
+            Search flights across major Philippine airlines with real-time pricing and availability.
+          </p>
+          <ul class="mt-3 text-gray-600 list-disc list-inside space-y-1 text-sm">
+            <li>Philippine Airlines</li>
+            <li>Cebu Pacific</li>
+            <li>AirAsia Philippines</li>
+          </ul>
+          <button id="btnStartSearch"
+            class="mt-5 w-full border rounded-md py-2 font-semibold hover:bg-gray-50">
+            Start Searching
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
+        <div class="p-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 text-purple-700 font-semibold">
+              <span class="text-lg">📊</span><span>Fare Comparison</span>
+            </div>
+            <button id="btnFetchCompare" class="text-sm px-3 py-1.5 border rounded-md hover:bg-gray-50">Search</button>
+          </div>
+          <p class="mt-3 text-gray-700">
+            Compare monthly fare trends and find the best deals throughout the year.
+          </p>
+          <div class="mt-2 text-sm text-gray-600">
+            Cheapest:
+            <span id="cheapMonthHome" class="text-green-700 font-semibold">—</span> |
+            Most Expensive:
+            <span id="expMonthHome" class="text-red-700 font-semibold">—</span>
+          </div>
+          <button id="btnCompare"
+            class="mt-5 w-full border rounded-md py-2 font-semibold hover:bg-gray-50">
+            Compare Fares
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="py-6 text-center text-sm text-gray-500">
+    © <span id="yr"></span> SmartLipad
+  </footer>
+
+  <script src="assets/config.js"></script>
+  <script>
+    const LatestFetch=(function(){const ctrls=new Map();function keyOf(input){return typeof input==="string"?input:input.url}async function latestFetch(input,init={},group){const k=group||keyOf(input);if(ctrls.has(k)){try{ctrls.get(k).abort()}catch{}}const controller=new AbortController();ctrls.set(k,controller);const opts={...init,signal:controller.signal};const res=await fetch(input,opts);if(ctrls.get(k)!==controller)throw new Error("stale");ctrls.delete(k);return res}return{latestFetch}})();
+
+    const fromSel = document.getElementById('from');
+    const toSel = document.getElementById('to');
+    const depart = document.getElementById('depart');
+    const ret = document.getElementById('return');
+    const swapBtn = document.getElementById('swapBtn');
+    const searchBtn = document.getElementById('searchBtn');
+    const btnBestTime = document.getElementById('btnBestTime');
+    const btnCompare = document.getElementById('btnCompare');
+    const btnFetchBest = document.getElementById('btnFetchBest');
+    const btnFetchCompare = document.getElementById('btnFetchCompare');
+    const btnStartSearch = document.getElementById('btnStartSearch');
+
+    const bestMonthEl = document.getElementById('bestMonthHome');
+    const bestAvgEl   = document.getElementById('bestAvgHome');
+    const cheapEl     = document.getElementById('cheapMonthHome');
+    const expEl       = document.getElementById('expMonthHome');
+
+    function qs(params){
+      return Object.entries(params).filter(([,v])=>v!==undefined&&v!==null&&v!=="").map(([k,v])=>`${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&");
+    }
+    function peso(v){ return Number(v||0).toLocaleString("en-PH",{style:"currency",currency:"PHP"}); }
+    function fmtMonth(s){
+      if(!s) return "—";
+      const [y,m]=s.split("-");
+      return new Date(+y, +m-1, 1).toLocaleString("en-US",{month:"short"});
+    }
+    function currentIATA(selectEl){
+      const m=(selectEl.value||"").match(/\b([A-Z]{3})\b\)?\s*$/);
+      return m?m[1]:"";
+    }
+    function todayISO(){
+      const t=new Date(); const p=n=>String(n).padStart(2,"0");
+      return `${t.getFullYear()}-${p(t.getMonth()+1)}-${p(t.getDate())}`;
+    }
+
+    if (!fromSel.value) fromSel.value = "Manila (Ninoy Aquino Intl – MNL)";
+    if (!toSel.value)   toSel.value   = "Cebu (Mactan–Cebu Intl – CEB)";
+
+    let lastFetched = { origin: null, destination: null };
+
+    function setLoadingPlaceholders(){
+      bestMonthEl.textContent = "Loading…";
+      bestAvgEl.textContent   = "—";
+      cheapEl.textContent     = "—";
+      expEl.textContent       = "—";
+    }
+
+    async function performFetch(){
+      const origin = currentIATA(fromSel);
+      const destination = currentIATA(toSel);
+      if(!origin || !destination) {
+        bestMonthEl.textContent = "—";
+        bestAvgEl.textContent   = "—";
+        cheapEl.textContent     = "—";
+        expEl.textContent       = "—";
+        return;
+      }
+      setLoadingPlaceholders();
+      try{
+        const tok = String(Date.now())+'-'+Math.random().toString(36).slice(2);
+        const url = `${SMARTLIPAD.API_BASE}/flights/predictions?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&months=12&token=${encodeURIComponent(tok)}`;
+        const r = await LatestFetch.latestFetch(url, {}, `predictions:${origin}-${destination}`);
+        if(!r.ok) throw new Error(await r.text());
+        const data = await r.json();
+        const best = data.best_time || null;
+        const avg  = data.avg_fare || 0;
+        const worst = data.most_expensive || null;
+
+        bestMonthEl.textContent = best ? `${fmtMonth(best.month)} ${best.month.split("-")[0]}` : "—";
+        bestAvgEl.textContent   = avg ? `Avg ${peso(avg)}` : "—";
+        if (best && worst && best.month === worst.month) {
+          cheapEl.textContent = fmtMonth(best.month);
+          expEl.textContent = "Same month (peak days)";
+        } else {
+          cheapEl.textContent = best ? fmtMonth(best.month) : "—";
+          expEl.textContent   = worst ? fmtMonth(worst.month) : "—";
+        }
+        lastFetched = { origin, destination };
+      }catch(e){
+        bestMonthEl.textContent = "—";
+        bestAvgEl.textContent   = "—";
+        cheapEl.textContent     = "—";
+        expEl.textContent       = "—";
+      }
+    }
+
+    swapBtn.addEventListener('click', () => {
+      const temp = fromSel.value;
+      fromSel.value = toSel.value;
+      toSel.value = temp;
+    });
+
+    function goToSearch(){
+      const origin = currentIATA(fromSel);
+      const destination = currentIATA(toSel);
+      const departDate = depart.value;
+      if (!origin || !destination || !departDate) { alert('Select origin, destination, and departure date.'); return; }
+      window.location.href = `search.html?` + qs({origin,destination,date:departDate});
+    }
+
+    searchBtn.addEventListener('click', goToSearch);
+    btnStartSearch.addEventListener('click', goToSearch);
+
+    btnBestTime.addEventListener('click', () => {
+      const origin = currentIATA(fromSel);
+      const destination = currentIATA(toSel);
+      const departDate = depart.value;
+      const returnDate = ret.value;
+      if (!origin || !destination) { alert('Please select both origin and destination.'); return; }
+      window.location.href = `predictions.html?` + qs({origin,destination,depart:departDate,return:returnDate});
+    });
+
+    btnCompare.addEventListener('click', () => {
+      const origin = currentIATA(fromSel);
+      const destination = currentIATA(toSel);
+      if (!origin || !destination) { alert('Please select both origin and destination.'); return; }
+      const ref = depart.value || todayISO();
+      const routes = `${origin}-${destination}`;
+      window.location.href = `compare.html?` + qs({routes,ref_date:ref});
+    });
+
+    btnFetchBest.addEventListener('click', performFetch);
+    btnFetchCompare.addEventListener('click', performFetch);
+
+    document.getElementById('yr').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

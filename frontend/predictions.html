@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;margin:0;padding:0}
-:root{--page-bg:#f5f7fb;--card:#ffffff;--muted:#6b7280;--text:#0b1220;--link-blue:#2563eb;--green:#10b981;--red:#ef4444;--light-border:rgba(15,23,42,0.06);--shadow:0 6px 18px rgba(11,36,64,0.04);}
+:root{--page-bg:#f5f7fb;--card:#ffffff;--muted:#6b7280;--text:#0b1220;--link-blue:#2563eb;--green:#10b981;--red:#ef4444;--light-border:rgba(15,23,42,0.06);--shadow:0 6px 18px rgba(11,36,64,0.04)}
 html,body{height:100%;background:var(--page-bg);color:var(--text)}
 .wrapper{max-width:1200px;margin:28px auto;padding:24px}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 4px;border-bottom:1px solid rgba(11,36,64,0.04)}
@@ -48,12 +48,19 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
 .chart-title{font-weight:700;margin-bottom:12px}
 .canvas-fixed{width:100%;height:320px;max-height:420px;position:relative}
 .canvas-fixed canvas{width:100% !important;height:100% !important;display:block}
+.empty{display:flex;align-items:center;justify-content:center;height:320px;color:#6b7280;border:1px dashed var(--light-border);border-radius:10px;background:#fff}
 .how-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px}
 .how-box{background:var(--card);padding:18px;border-radius:10px;border:1px solid var(--light-border);box-shadow:0 6px 14px rgba(11,36,64,0.03)}
 .how-box h3{display:flex;align-items:center;gap:10px;font-size:15px;margin-bottom:8px}
 .how-box h3 img{width:18px;height:18px}
 .how-footer{margin-top:12px;padding:12px;background:rgba(124,77,255,0.06);border-radius:8px;font-size:13px;color:var(--muted);border:1px solid rgba(124,77,255,0.08)}
 @media (max-width:1000px){.wrapper{padding:16px}.summary-row{flex-direction:column}.how-grid{grid-template-columns:1fr}.canvas-fixed{height:260px}}
+.skeleton{position:relative;overflow:hidden;background:#eef0f5;border-radius:8px}
+.skeleton.inline{display:inline-block;height:1em;line-height:1em}
+.skeleton::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.8) 50%,rgba(255,255,255,0) 100%);transform:translateX(-100%);animation:shimmer 1.4s infinite}
+@keyframes shimmer{100%{transform:translateX(100%)}}
+.chart-skeleton{height:320px;border:1px dashed var(--light-border);background:#fff}
+.hidden{display:none}
 </style>
 </head>
 <body>
@@ -64,17 +71,17 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
       <div class="brand"><img src="assets/airplane.png" alt="brand">SmartLipad</div>
     </div>
     <div class="topnav">
-      <a href="Homepage.html">Home</a>
+      <a href="index.html">Home</a>
       <a href="search.html">Search</a>
       <a class="active" href="predictions.html">Predictions</a>
-      <a href="Compare.html">Compare</a>
+      <a href="compare.html">Compare</a>
     </div>
   </div>
 
   <div class="header">
     <div class="icon-wrap"><img src="assets/brain_symbol.png" alt="ai"></div>
     <div class="title-main">AI Fare Predictions</div>
-    <div class="title-sub">Our AI analyzes historical flight data to predict future fare trends. Plan your trips and save money by booking at the optimal time.</div>
+    <div class="title-sub">Our AI analyzes historical flight data and live prices to help you time your booking.</div>
   </div>
 
   <div class="route-card">
@@ -83,6 +90,7 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
       <div class="route-meta">
         <div class="route-title">Current Route</div>
         <div class="route-value" id="currentRoute">—</div>
+        <div class="route-title" id="currentDates" style="margin-top:4px;color:#6b7280">—</div>
       </div>
     </div>
     <div class="route-right"><img src="assets/brain_symbol.png" alt="ai small" style="width:20px;height:20px">AI Powered</div>
@@ -92,8 +100,8 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
     <div class="summary-card">
       <div class="summary-left"><img src="assets/green_trend.png" alt="best"></div>
       <div class="summary-body">
-        <div class="small-label">Best Time to Fly</div>
-        <div class="big-label" id="bestMonth" style="color:#10b981">—</div>
+        <div class="small-label" id="bestLabel">Best Time to Fly</div>
+        <div class="big-label" id="bestMonth">—</div>
         <div class="price" id="bestPrice">—</div>
         <div class="pill green" id="bestPill"><span id="savings">—</span></div>
       </div>
@@ -101,8 +109,8 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
     <div class="summary-card">
       <div class="summary-left"><img src="assets/red_trend.png" alt="expensive"></div>
       <div class="summary-body">
-        <div class="small-label">Most Expensive</div>
-        <div class="big-label" id="expMonth" style="color:#ef4444">—</div>
+        <div class="small-label" id="expLabel">Most Expensive</div>
+        <div class="big-label" id="expMonth">—</div>
         <div class="price" id="expPrice">—</div>
         <div class="pill red" id="peakPill">Peak Season</div>
       </div>
@@ -111,34 +119,49 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
       <div class="summary-left"><img src="assets/I_Button.png" alt="avg"></div>
       <div class="summary-body">
         <div class="small-label">Average Fare</div>
-        <div class="big-label" id="avgFare" style="color:#2563eb">—</div>
-        <div class="small-label">12-Month Average</div>
+        <div class="big-label" id="avgFare">—</div>
+        <div class="small-label" id="avgNote">12-Month Average</div>
         <div class="pill blue" id="yearPill">Yearly Trend</div>
       </div>
     </div>
   </div>
 
-  <div class="chart-card"><div class="chart-title">12-Month Fare Forecast</div><div class="canvas-fixed"><canvas id="lineChart"></canvas></div></div>
-  <div class="chart-card"><div class="chart-title">Monthly Fare Breakdown</div><div class="canvas-fixed"><canvas id="barChart"></canvas></div></div>
+  <div class="chart-card">
+    <div class="chart-title">12-Month Fare Forecast</div>
+    <div class="canvas-fixed">
+      <div id="lineSkel" class="chart-skeleton skeleton"></div>
+      <canvas id="lineChart" class="hidden"></canvas>
+    </div>
+    <div class="empty" id="yearEmpty" style="display:none">No forecast available for this route.</div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Monthly Fare Breakdown</div>
+    <div class="canvas-fixed">
+      <div id="barSkel" class="chart-skeleton skeleton"></div>
+      <canvas id="barChart" class="hidden"></canvas>
+    </div>
+    <div class="empty" id="barEmpty" style="display:none">No monthly breakdown available.</div>
+  </div>
 
   <div class="how-grid">
     <div class="how-box">
       <h3><img src="assets/left_arrow.png" alt="">Data Sources</h3>
       <ul style="color:#6b7280;margin-left:18px">
-        <li>Historical flight prices from major Philippine airlines</li>
-        <li>Seasonal travel patterns and demand fluctuations</li>
-        <li>Holiday schedules and special events</li>
-        <li>Economic indicators and fuel price trends</li>
+        <li>Live Amadeus price quotes</li>
+        <li>Aggregated historical daily minimums per route</li>
+        <li>Seasonality and holiday effects</li>
+        <li>Rolling averages for stability</li>
       </ul>
-      <div class="how-footer">Accuracy: Our predictions have shown 85% accuracy for 3-month forecasts and 72% accuracy for 12-month predictions based on historical validation.</div>
+      <div class="how-footer">Charts reflect historical trends and available pricing signals.</div>
     </div>
     <div class="how-box">
       <h3><img src="assets/brain_symbol.png" alt="">Prediction Model</h3>
       <ul style="color:#6b7280;margin-left:18px">
-        <li>Prophet time series forecasting</li>
-        <li>Machine learning pattern recognition</li>
-        <li>Confidence intervals and uncertainty modeling</li>
-        <li>Continuous model updates with new data</li>
+        <li>Window sampling around target dates</li>
+        <li>Cheapest one-way per day; sum for round-trip</li>
+        <li>Best/worst/average from sampled window</li>
+        <li>Monthly forecast from historical route data</li>
       </ul>
     </div>
   </div>
@@ -146,47 +169,116 @@ html,body{height:100%;background:var(--page-bg);color:var(--text)}
 
 <script src="assets/config.js"></script>
 <script>
-(async()=>{
-  const p=new URLSearchParams(location.search);
-  const originLabel=p.get("origin")||"Manila (MNL)";
-  const destLabel=p.get("destination")||"Cebu (CEB)";
-  const iata=(s)=>{const m=(s||"").match(/([A-Z]{3})\)?$/);return m?m[1]:s};
-  const origin=iata(originLabel);
-  const destination=iata(destLabel);
-  document.getElementById("currentRoute").textContent=`${origin} → ${destination}`;
-
-  const url=`${SMARTLIPAD.API_BASE}/flights/predictions?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`;
-  let data={};
-  try{
-    const r=await fetch(url);
-    if(!r.ok)throw new Error(await r.text());
-    data=await r.json();
-  }catch(e){
-    console.error(e);
-    return;
+(function(){
+  const LatestFetch=(function(){const ctrls=new Map();function keyOf(input){return typeof input==="string"?input:input.url}async function latestFetch(input,init={},group){const k=group||keyOf(input);if(ctrls.has(k)){try{ctrls.get(k).abort()}catch{}}const controller=new AbortController();ctrls.set(k,controller);const opts={...init,signal:controller.signal};const res=await fetch(input,opts);if(ctrls.get(k)!==controller)throw new Error("stale");ctrls.delete(k);return res}return{latestFetch}})();
+  function peso(v){return "₱"+Number(v||0).toLocaleString("en-PH")}
+  function monlbl(s){var a=(s||"").split("-");if(a.length<2)return "—";return new Date(+a[0],+a[1]-1,1).toLocaleString("en-US",{month:"short"})+" "+a[0]}
+  function mean(arr){if(!arr.length)return 0;return arr.reduce((a,b)=>a+b,0)/arr.length}
+  var p=new URLSearchParams(location.search);
+  var origin=(p.get("origin")||"MNL").toUpperCase();
+  var destination=(p.get("destination")||"CEB").toUpperCase();
+  var depart=p.get("depart")||"";
+  var ret=p.get("return")||"";
+  document.getElementById("currentRoute").textContent=origin+" → "+destination;
+  document.getElementById("currentDates").textContent=(depart?new Date(depart).toLocaleDateString("en-PH",{month:"short",day:"numeric",year:"numeric"}):"")+(ret?("  •  "+new Date(ret).toLocaleDateString("en-PH",{month:"short",day:"numeric",year:"numeric"})):"");
+  var bestMonth=document.getElementById("bestMonth");
+  var bestPrice=document.getElementById("bestPrice");
+  var expMonth=document.getElementById("expMonth");
+  var expPrice=document.getElementById("expPrice");
+  var avgFare=document.getElementById("avgFare");
+  var savingsEl=document.getElementById("savings");
+  var peakEl=document.getElementById("peakPill");
+  var bestLabel=document.getElementById("bestLabel");
+  var expLabel=document.getElementById("expLabel");
+  var avgNote=document.getElementById("avgNote");
+  var kpiFilled=false;
+  function setSkeleton(on){
+    var targets=[bestMonth,bestPrice,expMonth,expPrice,avgFare];
+    targets.forEach(function(el){
+      if(on){
+        el.textContent="";
+        el.classList.add("skeleton","inline");
+        el.style.width=el===avgFare?"120px":"100px";
+      }else{
+        el.classList.remove("skeleton","inline");
+        el.style.width="";
+      }
+    });
+    document.getElementById("lineSkel").classList.toggle("hidden",!on);
+    document.getElementById("barSkel").classList.toggle("hidden",!on);
   }
-
-  if(!data.monthly_forecast)return;
-  const months=data.monthly_forecast.map(m=>m.month);
-  const fares=data.monthly_forecast.map(m=>m.avg_fare);
-
-  const best=data.best_time||{};
-  const worst=data.most_expensive||{};
-  const avg=data.avg_fare||0;
-
-  document.getElementById("bestMonth").textContent=best.month||"—";
-  document.getElementById("bestPrice").textContent=best.price?`₱${Number(best.price).toLocaleString()}`:"—";
-  document.getElementById("savings").textContent=best.savings||"—";
-  document.getElementById("expMonth").textContent=worst.month||"—";
-  document.getElementById("expPrice").textContent=worst.price?`₱${Number(worst.price).toLocaleString()}`:"—";
-  document.getElementById("avgFare").textContent=avg?`₱${Number(avg).toLocaleString()}`:"—";
-
-  const ctx1=document.getElementById('lineChart').getContext('2d');
-  const ctx2=document.getElementById('barChart').getContext('2d');
-  new Chart(ctx1,{type:'line',data:{labels:months,datasets:[{data:fares,borderWidth:2.5,tension:.3,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,0.04)',pointBackgroundColor:'#2563eb'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
-  new Chart(ctx2,{type:'bar',data:{labels:months,datasets:[{data:fares,backgroundColor:'rgba(37,99,235,0.9)',borderRadius:8,maxBarThickness:48}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  function setKPI(best_when, best_price, worst_when, worst_price, avg_value){
+    if(best_when){ bestMonth.textContent = monlbl(best_when); }
+    if(best_price!=null){ bestPrice.textContent = peso(best_price); }
+    if(worst_when){ expMonth.textContent = monlbl(worst_when); }
+    if(worst_price!=null){ expPrice.textContent = peso(worst_price); }
+    if(avg_value!=null){ avgFare.textContent = peso(avg_value); }
+    if(avg_value!=null && best_price!=null){
+      var s=Math.max(0,Math.round(((avg_value-best_price)/avg_value)*100)); savingsEl.textContent=s+"% below avg";
+    }
+    if(avg_value!=null && worst_price!=null){
+      var pUp=Math.max(0,Math.round(((worst_price-avg_value)/avg_value)*100)); peakEl.textContent="Up to "+pUp+"% above avg";
+    }
+    kpiFilled=true;
+    setSkeleton(false);
+  }
+  function drawMoneyLine(ctx, labels, values, opt){
+    return new Chart(ctx,{
+      type:"line",
+      data:{labels,datasets:[{data:values,borderWidth:2.5,tension:.25,borderColor:opt.border,backgroundColor:opt.fill,pointBackgroundColor:opt.border}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>"₱"+Number(v).toLocaleString()}}}}
+    });
+  }
+  function drawMoneyBar(ctx, labels, values){
+    return new Chart(ctx,{
+      type:"bar",
+      data:{labels,datasets:[{data:values,backgroundColor:"rgba(37,99,235,0.9)",borderRadius:8,maxBarThickness:48}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>"₱"+Number(v).toLocaleString()}}}}
+    });
+  }
+  async function renderMonthlyForecast(){
+    try{
+      const tok=String(Date.now())+'-'+Math.random().toString(36).slice(2);
+      const url=`${SMARTLIPAD.API_BASE}/flights/predictions?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&months=12&token=${encodeURIComponent(tok)}`;
+      const r=await LatestFetch.latestFetch(url, {}, `predictions:${origin}-${destination}`);
+      let months=[], fares=[], best=null, worst=null, overall=null;
+      if(r.ok){
+        const data=await r.json();
+        const mf=(data.monthly_forecast||[]);
+        months=mf.map(m=>m.month).filter(Boolean);
+        fares=mf.map(m=>Number(m.avg_fare||0));
+        best=data.best_time||null;
+        worst=data.most_expensive||null;
+        overall=data.avg_fare||null;
+      }
+      if(!kpiFilled && best && worst && overall!=null){
+        bestLabel.textContent = "Best Time to Fly";
+        expLabel.textContent  = "Most Expensive";
+        avgNote.textContent   = "12-Month Average";
+        setKPI(best.month, best.price, worst.month, worst.price, overall);
+      }
+      if(!months.length){
+        document.getElementById("yearEmpty").style.display="flex";
+        document.getElementById("barEmpty").style.display="flex";
+        return;
+      }
+      const shortLabels=months.map(mon=>new Date(mon+"-01").toLocaleString("en-US",{month:"short"}));
+      document.getElementById("lineSkel").classList.add("hidden");
+      document.getElementById("barSkel").classList.add("hidden");
+      document.getElementById("lineChart").classList.remove("hidden");
+      document.getElementById("barChart").classList.remove("hidden");
+      drawMoneyLine(document.getElementById("lineChart").getContext("2d"),shortLabels,fares,{border:"#2563eb",fill:"rgba(37,99,235,0.08)"});
+      drawMoneyBar(document.getElementById("barChart").getContext("2d"),shortLabels,fares);
+    }catch{
+      document.getElementById("yearEmpty").style.display="flex";
+      document.getElementById("barEmpty").style.display="flex";
+    }
+  }
+  (async function init(){
+    setSkeleton(true);
+    await renderMonthlyForecast();
+  })();
 })();
 </script>
-
 </body>
 </html>

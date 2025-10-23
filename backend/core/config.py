@@ -1,11 +1,7 @@
-"""
-SmartLipad Backend - Core Configuration Module
-"""
 import os
 from typing import Optional, Literal
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
-
 
 class Settings(BaseSettings):
     DB_HOST: str = "localhost"
@@ -32,8 +28,11 @@ class Settings(BaseSettings):
     REDIS_PORT: int = 6379
     REDIS_DB: int = 0
 
+    PROPHET_ENABLED: bool = True
     PROPHET_SEASONALITY_MODE: str = "multiplicative"
     PROPHET_CHANGEPOINT_PRIOR_SCALE: float = 0.05
+    PREDICTION_MONTHS_DEFAULT: int = 12
+    PREDICTION_MONTHS_MAX: int = 24
     FORECAST_HORIZON_DAYS: int = 365
 
     DATA_PROVIDER: Literal["amadeus", "skyscanner", "offline_csv"] = "amadeus"
@@ -62,7 +61,6 @@ class Settings(BaseSettings):
     @property
     def redis_url(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
-
 
 @lru_cache()
 def get_settings() -> Settings:

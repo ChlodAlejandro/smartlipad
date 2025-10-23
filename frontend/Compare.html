@@ -27,31 +27,52 @@
     .inline label{font-size:14px;color:var(--muted)}
     .date-pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--ring);border-radius:10px;padding:8px 10px;background:#fff}
     .date-pill input{border:0;outline:0;font:inherit}
+    .inputs{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
+    select{width:100%;border:1px solid var(--ring);border-radius:10px;background:#fff;padding:10px;font:inherit}
+    .add-btn{border:0;border-radius:10px;padding:10px 12px;font-weight:700;color:#fff;background:var(--primary);cursor:pointer}
+    .add-btn[disabled]{opacity:.5;cursor:not-allowed}
     .chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:6px}
-    .chip{padding:10px 12px;border-radius:10px;border:1px solid var(--ring);background:var(--chip);font-weight:600;font-size:14px;color:#1e3a8a;text-align:center;cursor:pointer;user-select:none}
-    .chip.red{background:#fee2e2;color:#991b1b} .chip.green{background:#dcfce7;color:#14532d} .chip.outline{background:#fff;color:#334155}
+    .chip{padding:10px 12px;border-radius:10px;border:1px solid var(--ring);background:var(--chip);font-weight:600;font-size:14px;color:#1e3a8a;text-align:center;user-select:none}
+    .chip.toggle{cursor:pointer}
+    .chip.outline{background:#fff;color:#334155}
+    .actions-row{display:flex;gap:10px;align-items:center;margin-top:10px}
+    .btn{border:0;border-radius:10px;padding:10px 12px;font-weight:700;color:#fff;background:var(--primary);text-decoration:none;cursor:pointer}
+    .btn[disabled]{opacity:.5;cursor:not-allowed}
+    .btn.ghost{background:#111827}
     .banner{margin-top:10px;border-radius:10px;border:1px solid #d1fae5;background:#ecfdf5;padding:10px 12px;color:#065f46;font-weight:600;display:flex;align-items:center;gap:10px}
     .banner::before{content:"▾";display:inline-block;transform:rotate(-90deg);font-weight:900}
-    .legend{display:flex;gap:18px;justify-content:center;font-size:13px;color:var(--muted);margin:8px 0 0;flex-wrap:wrap}
+    .charts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .chart-card{border:1px solid var(--ring);border-radius:12px;background:#fff;padding:12px}
+    .chart-title{font-weight:700;font-size:14px;margin:0 0 6px}
+    .chart-wrap{position:relative;height:260px;width:100%}
+    .chart-wrap canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
+    .legend{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:8px;color:var(--muted);font-size:12px}
     .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
     .list{display:grid;gap:10px;margin-top:10px}
     .row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:12px;border-radius:10px;border:1px solid var(--ring);background:#fff}
-    .route{font-weight:700} .price{font-weight:800;font-size:18px;color:#1f2937}
-    .delta{font-weight:700;font-size:13px} .delta.down{color:var(--success)} .delta.up{color:var(--danger)}
-    .btn{border:0;border-radius:10px;padding:10px 12px;font-weight:700;color:#fff;background:var(--primary);text-decoration:none}
+    .route{font-weight:700}
+    .price{font-weight:800;font-size:18px;color:#1f2937}
+    .delta{font-weight:700;font-size:13px}
+    .delta.down{color:var(--success)}
+    .delta.up{color:var(--danger)}
+    .providers{display:flex;gap:8px;flex-wrap:wrap}
+    .provider{display:inline-block;background:#2563eb;color:#fff;border-radius:10px;padding:8px 10px;font-weight:700;text-decoration:none}
+    .provider.alt{background:#111827}
     .tips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .tip{border:1px solid var(--ring);border-radius:12px;background:#fff;padding:14px}
-    .tip h4{margin:0 0 6px} .tip p{margin:0;color:var(--muted);font-size:14px} .tip .icon{font-size:20px;margin-right:6px}
-    .actions{display:flex;gap:10px;justify-content:center;margin-top:16px} .btn.secondary{background:#111827;color:#fff}
+    .tip h4{margin:0 0 6px}
+    .tip p{margin:0;color:var(--muted);font-size:14px}
+    .tip .icon{font-size:20px;margin-right:6px}
+    .footer-actions{display:flex;gap:10px;justify-content:center;margin-top:16px}
     .badge{position:fixed;right:16px;top:50%;transform:translateY(-50%);background:#0f172a;color:#fff;font-size:12px;padding:8px 10px;border-radius:999px}
-    @media (max-width:900px){.chips{grid-template-columns:repeat(2,minmax(0,1fr))}.tips{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media (max-width:600px){.chips{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:8px}.actions{flex-direction:column}}
+    @media (max-width:900px){.chips{grid-template-columns:repeat(2,minmax(0,1fr))}.tips{grid-template-columns:repeat(2,minmax(0,1fr))}.charts{grid-template-columns:1fr}}
+    @media (max-width:600px){.chips{grid-template-columns:1fr}.row{grid-template-columns:1fr;gap:8px}.footer-actions{flex-direction:column}}
   </style>
 </head>
 <body>
   <div class="wrap">
     <div class="topbar">
-      <a class="back" href="Homepage.html">Back</a>
+      <a class="back" href="index.html">Back</a>
       <div class="brand"><img src="assets/airplane.png" alt="SmartLipad"><b>SmartLipad</b></div>
       <a class="pill-ghost" href="#" title="Current page">Route Comparison</a>
     </div>
@@ -65,29 +86,112 @@
           <label>Reference Date</label>
           <div class="date-pill"><input type="date" id="refDate"></div>
         </div>
-        <div>
-          <label style="color:#6b7280;font-size:14px">Select Routes to Compare (Choose up to 5)</label>
-          <div class="chips" id="routeChips">
-            <div class="chip" data-origin="MNL" data-destination="CEB" data-color="blue">Manila → Cebu</div>
-            <div class="chip red" data-origin="MNL" data-destination="DVO" data-color="red">Manila → Davao</div>
-            <div class="chip outline" data-origin="MNL" data-destination="ILO">Manila → Iloilo</div>
-            <div class="chip outline" data-origin="MNL" data-destination="BCD">Manila → Bacolod</div>
-            <div class="chip outline" data-origin="CEB" data-destination="MNL">Cebu → Manila</div>
-            <div class="chip green" data-origin="CEB" data-destination="DVO" data-color="green">Cebu → Davao</div>
-            <div class="chip outline" data-origin="DVO" data-destination="MNL">Davao → Manila</div>
-            <div class="chip outline" data-origin="DVO" data-destination="CEB">Davao → Cebu</div>
-            <div class="chip outline" data-origin="ILO" data-destination="MNL">Iloilo → Manila</div>
-          </div>
-          <div id="selCount" style="color:#6b7280;font-size:12px;margin-top:6px">3 routes selected</div>
+        <div class="inputs">
+          <select id="from">
+            <option value="" disabled selected>Select origin</option>
+            <option>Manila (Ninoy Aquino Intl – MNL)</option>
+            <option>Clark (Clark Intl – CRK)</option>
+            <option>Subic (Subic Bay Intl – SFS)</option>
+            <option>Laoag (Laoag Intl – LAO)</option>
+            <option>Baguio (Loakan Airport – BAG)</option>
+            <option>Naga (Naga Airport – WNP)</option>
+            <option>Legazpi (Bicol Intl – LGP)</option>
+            <option>Virac (Virac Airport – VRC)</option>
+            <option>San Jose (San Jose – SJI)</option>
+            <option>Masbate (Masbate – MBT)</option>
+            <option>Basco (Basco – BSO)</option>
+            <option>Baler (Baler – BQA)</option>
+            <option>Cebu (Mactan–Cebu Intl – CEB)</option>
+            <option>Iloilo (Iloilo Intl – ILO)</option>
+            <option>Bacolod (Bacolod–Silay – BCD)</option>
+            <option>Kalibo (Kalibo – KLO)</option>
+            <option>Caticlan/Boracay (Godofredo P. Ramos – MPH)</option>
+            <option>Roxas (Roxas – RXS)</option>
+            <option>Tacloban (Daniel Z. Romualdez – TAC)</option>
+            <option>Ormoc (Ormoc – OMC)</option>
+            <option>Catarman (Catarman – CRM)</option>
+            <option>Bohol (Panglao – TAG)</option>
+            <option>Davao (Francisco Bangoy Intl – DVO)</option>
+            <option>Cagayan de Oro (Laguindingan – CGY)</option>
+            <option>General Santos (General Santos – GES)</option>
+            <option>Zamboanga (Zamboanga Intl – ZAM)</option>
+            <option>Butuan (Bancasi – BXU)</option>
+            <option>Dipolog (Dipolog – DPL)</option>
+            <option>Ozamiz (Labo – OZC)</option>
+            <option>Surigao (Surigao – SUG)</option>
+            <option>Siargao (Sayak – IAO)</option>
+            <option>Cotabato (Awang – CBO)</option>
+            <option>Pagadian (Pagadian – PAG)</option>
+            <option>Camiguin (Mambajao – CGM)</option>
+            <option>Jolo (Jolo – JOL)</option>
+            <option>Tawi-Tawi (Sanga-Sanga – TWT)</option>
+            <option>Puerto Princesa (Puerto Princesa Intl – PPS)</option>
+            <option>Coron (Busuanga – USU)</option>
+            <option>El Nido (Lio – ENI)</option>
+            <option>San Vicente (San Vicente – SWL)</option>
+          </select>
+          <select id="to">
+            <option value="" disabled selected>Select destination</option>
+            <option>Manila (Ninoy Aquino Intl – MNL)</option>
+            <option>Clark (Clark Intl – CRK)</option>
+            <option>Subic (Subic Bay Intl – SFS)</option>
+            <option>Laoag (Laoag Intl – LAO)</option>
+            <option>Baguio (Loakan Airport – BAG)</option>
+            <option>Naga (Naga Airport – WNP)</option>
+            <option>Legazpi (Bicol Intl – LGP)</option>
+            <option>Virac (Virac Airport – VRC)</option>
+            <option>San Jose (San Jose – SJI)</option>
+            <option>Masbate (Masbate – MBT)</option>
+            <option>Basco (Basco – BSO)</option>
+            <option>Baler (Baler – BQA)</option>
+            <option>Cebu (Mactan–Cebu Intl – CEB)</option>
+            <option>Iloilo (Iloilo Intl – ILO)</option>
+            <option>Bacolod (Bacolod–Silay – BCD)</option>
+            <option>Kalibo (Kalibo – KLO)</option>
+            <option>Caticlan/Boracay (Godofredo P. Ramos – MPH)</option>
+            <option>Roxas (Roxas – RXS)</option>
+            <option>Tacloban (Daniel Z. Romualdez – TAC)</option>
+            <option>Ormoc (Ormoc – OMC)</option>
+            <option>Catarman (Catarman – CRM)</option>
+            <option>Bohol (Panglao – TAG)</option>
+            <option>Davao (Francisco Bangoy Intl – DVO)</option>
+            <option>Cagayan de Oro (Laguindingan – CGY)</option>
+            <option>General Santos (General Santos – GES)</option>
+            <option>Zamboanga (Zamboanga Intl – ZAM)</option>
+            <option>Butuan (Bancasi – BXU)</option>
+            <option>Dipolog (Dipolog – DPL)</option>
+            <option>Ozamiz (Labo – OZC)</option>
+            <option>Surigao (Surigao – SUG)</option>
+            <option>Siargao (Sayak – IAO)</option>
+            <option>Cotabato (Awang – CBO)</option>
+            <option>Pagadian (Pagadian – PAG)</option>
+            <option>Camiguin (Mambajao – CGM)</option>
+            <option>Jolo (Jolo – JOL)</option>
+            <option>Tawi-Tawi (Sanga-Sanga – TWT)</option>
+            <option>Puerto Princesa (Puerto Princesa Intl – PPS)</option>
+            <option>Coron (Busuanga – USU)</option>
+            <option>El Nido (Lio – ENI)</option>
+            <option>San Vicente (San Vicente – SWL)</option>
+          </select>
+          <button class="add-btn" id="addRoute" type="button">Add Route</button>
         </div>
-        <div class="banner" id="bestDeal">✓ Best Deal Found! — <span id="bestDealText" style="font-weight:700;margin-left:6px">Loading…</span></div>
+        <div>
+          <label style="color:#6b7280;font-size:14px">Selected Routes (up to 5)</label>
+          <div class="chips" id="routeChips"></div>
+          <div id="selCount" style="color:#6b7280;font-size:12px;margin-top:6px">0 routes selected</div>
+          <div class="actions-row">
+            <button class="btn" id="btnCompare" type="button" disabled>Compare Selected Routes</button>
+            <button class="btn ghost" id="btnClear" type="button">Clear</button>
+          </div>
+        </div>
+        <div class="banner">Best Deal Found! — <span id="bestDealText" style="font-weight:700;margin-left:6px">Click "Compare Selected Routes" to load</span></div>
       </div>
     </section>
 
     <section class="card section">
       <h3 style="margin:0 0 6px">12-Month Price Comparison</h3>
-      <div style="color:#6b7280;font-size:13px;margin-bottom:8px">Compare fare trends across selected routes</div>
-      <canvas id="trendChart" height="110"></canvas>
+      <div style="color:#6b7280;font-size:13px;margin-bottom:8px">Each selected route gets its own chart</div>
+      <div id="trendGrid" class="charts"></div>
       <div id="legend" class="legend"></div>
     </section>
 
@@ -109,206 +213,247 @@
         <div class="tip"><h4><span class="icon">📅</span>Flexible Dates</h4><p>Flying on weekdays is usually cheaper than weekends</p></div>
         <div class="tip"><h4><span class="icon">⏰</span>Off-Peak Hours</h4><p>Early morning or late night flights often have lower prices</p></div>
       </div>
-      <div class="actions"><a class="btn" href="Homepage.html">Search Flights</a><a class="btn secondary" href="predictions.html">View AI Predictions</a></div>
+      <div class="footer-actions"><a class="btn" href="index.html">Search Flights</a><a class="btn ghost" href="predictions.html">View AI Predictions</a></div>
     </section>
 
-    <div class="badge">Made by • you</div>
+    <div class="badge">Deals</div>
   </div>
 
   <script src="assets/config.js"></script>
   <script>
-    const refInput = document.getElementById('refDate');
-    const dateLabel = document.getElementById('dateLabel');
-    const chips = Array.from(document.querySelectorAll('#routeChips .chip'));
-    const selCount = document.getElementById('selCount');
-    const bestDealBox = document.getElementById('bestDeal');
-    const bestDealText = document.getElementById('bestDealText');
-    const priceList = document.getElementById('priceList');
-    const legendBox = document.getElementById('legend');
-    let chart;
+    const refInput=document.getElementById('refDate');
+    const dateLabel=document.getElementById('dateLabel');
+    const chipsBox=document.getElementById('routeChips');
+    const selCount=document.getElementById('selCount');
+    const bestDealText=document.getElementById('bestDealText');
+    const priceList=document.getElementById('priceList');
+    const legendBox=document.getElementById('legend');
+    const fromSel=document.getElementById('from');
+    const toSel=document.getElementById('to');
+    const addRouteBtn=document.getElementById('addRoute');
+    const btnCompare=document.getElementById('btnCompare');
+    const btnClear=document.getElementById('btnClear');
+    const trendGrid=document.getElementById('trendGrid');
+    let charts=[];
+    const palette=['#2563eb','#ef4444','#22c55e','#a855f7','#f59e0b','#0ea5e9','#10b981','#e11d48','#7c3aed','#84cc16'];
 
-    const palette = [
-      '#2563eb','#ef4444','#22c55e','#a855f7','#f59e0b',
-      '#0ea5e9','#10b981','#e11d48','#7c3aed','#84cc16'
-    ];
+    function initDate(){const t=new Date();const pad=n=>String(n).padStart(2,'0');refInput.value=`${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;dateLabel.textContent=t.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}
 
-    function initDate() {
-      const t = new Date();
-      const pad = n => String(n).padStart(2,'0');
-      refInput.value = `${t.getFullYear()}-${pad(t.getMonth()+1)}-${pad(t.getDate())}`;
-      dateLabel.textContent = t.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+    function toIATA(label){const matches=(label||"").toUpperCase().match(/\b[A-Z]{3}\b/g);return matches?matches[matches.length-1]:""}
+
+    function monthKeyFromISO(iso){const m=iso.match(/^(\d{4})-(\d{2})-\d{2}$/);return m?`${m[1]}-${m[2]}`:null}
+    function labelFromRoute(route){const [o,d]=route.split('-');const map={MNL:'Manila',CEB:'Cebu',DVO:'Davao',ILO:'Iloilo',BCD:'Bacolod',CRK:'Clark',KLO:'Kalibo',MPH:'Caticlan',TAG:'Bohol',LAO:'Laoag',BAG:'Baguio',WNP:'Naga',LGP:'Legazpi',VRC:'Virac',SJI:'San Jose',MBT:'Masbate',BSO:'Basco',BQA:'Baler',RXS:'Roxas',TAC:'Tacloban',OMC:'Ormoc',CRM:'Catarman',CGY:'Cagayan de Oro',GES:'General Santos',ZAM:'Zamboanga',BXU:'Butuan',DPL:'Dipolog',OZC:'Ozamiz',SUG:'Surigao',IAO:'Siargao',CBO:'Cotabato',PAG:'Pagadian',CGM:'Camiguin',JOL:'Jolo',TWT:'Tawi-Tawi',PPS:'Puerto Princesa',USU:'Coron',ENI:'El Nido',SWL:'San Vicente'};return `${map[o]||o} → ${map[d]||d}`}
+    function monthToShort(ym){const [y,m]=ym.split('-').map(Number);const d=new Date(y,m-1,1);return d.toLocaleDateString(undefined,{month:'short',year:'2-digit'})}
+    function hexToRGBA(hex,a=0.2){const c=hex.replace('#','');const n=parseInt(c,16);const r=(n>>16)&255,g=(n>>8)&255,b=n&255;return `rgba(${r},${g},${b},${a})`}
+
+    function makeChip(origin,destination){
+      const div=document.createElement('div');
+      div.className='chip toggle';
+      div.dataset.origin=origin;
+      div.dataset.destination=destination;
+      div.textContent=labelFromRoute(`${origin}-${destination}`);
+      div.addEventListener('click',()=>{div.classList.toggle('outline');updateSelCount();updateButtons()});
+      return div;
     }
 
-    function getSelectedRoutes() {
-      return chips.filter(c => !c.classList.contains('outline')).slice(0,5).map(c => ({
-        origin: c.dataset.origin,
-        destination: c.dataset.destination,
-        label: c.textContent.trim()
-      }));
-    }
-
-    function updateSelCount() {
-      selCount.textContent = `${getSelectedRoutes().length} routes selected`;
-    }
-
-    function toggleChip(e) {
-      const el = e.currentTarget;
-      const selected = getSelectedRoutes().map(r => r.label);
-      if (el.classList.contains('outline')) {
-        if (selected.length >= 5) return;
-        el.classList.remove('outline');
-      } else {
-        el.classList.add('outline');
+    function ensureChip(origin,destination){
+      const key=`${origin}-${destination}`;
+      const exists=[...chipsBox.children].some(c=>`${c.dataset.origin}-${c.dataset.destination}`===key);
+      if(!exists){
+        const cnt=getSelectedRoutes().length;
+        if(cnt>=5)return;
+        chipsBox.appendChild(makeChip(origin,destination));
       }
+    }
+
+    function getSelectedRoutes(){
+      return [...chipsBox.children]
+        .filter(c=>!c.classList.contains('outline'))
+        .slice(0,5)
+        .map(c=>({origin:c.dataset.origin,destination:c.dataset.destination,label:c.textContent.trim()}));
+    }
+
+    function updateSelCount(){selCount.textContent=`${getSelectedRoutes().length} routes selected`}
+
+    function currentIATAs(){
+      const o=toIATA(fromSel.value);
+      const d=toIATA(toSel.value);
+      return {o,d};
+    }
+
+    function updateButtons(){
+      const {o,d}=currentIATAs();
+      addRouteBtn.disabled=!(o&&d&&o!==d);
+      btnCompare.disabled=getSelectedRoutes().length===0;
+    }
+
+    fromSel.addEventListener('change',updateButtons);
+    toSel.addEventListener('change',updateButtons);
+
+    addRouteBtn.addEventListener('click',()=>{
+      const {o,d}=currentIATAs();
+      if(!o||!d||o===d)return;
+      ensureChip(o,d);
       updateSelCount();
-      fetchAndRender();
-    }
-
-    chips.forEach(chip => chip.addEventListener('click', toggleChip));
-
-    refInput.addEventListener('change', () => {
-      const d = new Date(refInput.value);
-      if (!isNaN(d)) {
-        dateLabel.textContent = d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
-      }
-      fetchAndRender();
+      updateButtons();
     });
 
-   function buildQuery() {
-    const routes = getSelectedRoutes().map(r => `${r.origin}-${r.destination}`).join(',');
-    const ref = refInput.value;
-    return `${SMARTLIPAD.API_BASE}/flights/compare/monthly?routes=${encodeURIComponent(routes)}&ref_date=${encodeURIComponent(ref)}`;
-    }
-
-    async function fetchAndRender() {
-      const url = buildQuery();
-      try {
-        const res = await fetch(url);
-        if (!res.ok) throw new Error(await res.text());
-        const data = await res.json();
-        renderAll(data);
-      } catch (err) {
-        bestDealText.textContent = 'Unable to load comparison right now';
-        priceList.innerHTML = '';
-        renderChart({routes:[]});
-        console.error(err);
-      }
-    }
-
-    function renderAll(data) {
-      renderBestDeal(data);
-      renderList(data);
-      renderChart(data);
-    }
-
-    function renderBestDeal(data) {
-      const best = data?.best_deal;
-      if (best && best.route && best.cheaper_by != null) {
-        bestDealText.textContent = `${labelFromRoute(best.route)} is ₱${Number(best.cheaper_by).toLocaleString()} cheaper than usual`;
-      } else {
-        bestDealText.textContent = 'Select routes to see today’s best deal';
-      }
-    }
-
-    function renderList(data) {
-      const rows = (data?.routes || []).map(r => {
-        const routeLabel = labelFromRoute(r.route);
-        const price = r.current_price != null ? `₱${Number(r.current_price).toLocaleString()}` : '—';
-        const delta = Number(r.delta_vs_avg || 0);
-        const deltaText = delta === 0 ? '' : (delta < 0 ? `<span class="delta down">▼ ₱${Math.abs(delta).toLocaleString()}</span>` : `<span class="delta up">▲ ₱${Math.abs(delta).toLocaleString()}</span>`);
-        const [o, d] = r.route.split('-');
-        const ref = refInput.value;
-        const link = `results.html?origin=${o}&destination=${d}&depart=${encodeURIComponent(ref)}`;
-        return `
-          <div class="row">
-            <div class="route">${routeLabel}</div>
-            <div class="price">${price} ${deltaText}</div>
-            <a class="btn" href="${link}">Book Now</a>
-          </div>
-        `;
-      }).join('');
-      priceList.innerHTML = rows || '<div style="color:#6b7280">No routes selected.</div>';
-    }
-
-    function renderChart(data) {
-      const ctx = document.getElementById('trendChart').getContext('2d');
-      if (chart) { chart.destroy(); }
-      const routeBlocks = (data?.routes || []);
-      const monthLabels = unifyMonths(routeBlocks);
-      const datasets = routeBlocks.map((r, idx) => {
-        const color = palette[idx % palette.length];
-        const map = new Map((r.series || []).map(p => [p.month, Number(p.price)]));
-        const series = monthLabels.map(m => map.get(m) ?? null);
-        return {
-          label: labelFromRoute(r.route),
-          data: series,
-          borderColor: color,
-          backgroundColor: hexToRGBA(color, 0.12),
-          pointBackgroundColor: color,
-          tension: .3,
-          borderWidth: 2
-        };
-      });
-
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: monthLabels.map(m => monthToShort(m)), datasets },
-        options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } } }
-      });
-
-      legendBox.innerHTML = routeBlocks.map((r, idx) => {
-        const color = palette[idx % palette.length];
-        return `<span><span class="dot" style="background:${color}"></span>${labelFromRoute(r.route)}</span>`;
-      }).join('');
-    }
-
-    function unifyMonths(routeBlocks) {
-      const set = new Set();
-      routeBlocks.forEach(r => (r.series||[]).forEach(p => set.add(p.month)));
-      return Array.from(set).sort();
-    }
-
-    function monthToShort(ym) {
-      const [y, m] = ym.split('-').map(Number);
-      const d = new Date(y, m-1, 1);
-      return d.toLocaleDateString(undefined, { month: 'short', year:'2-digit' });
-    }
-
-    function labelFromRoute(route) {
-      const [o,d] = route.split('-');
-      const map = {
-        MNL:'Manila', CEB:'Cebu', DVO:'Davao', ILO:'Iloilo', BCD:'Bacolod',
-        CRK:'Clark', KLO:'Kalibo', MPH:'Caticlan', TAG:'Bohol'
-      };
-      return `${map[o]||o} → ${map[d]||d}`;
-    }
-
-    function hexToRGBA(hex, a=0.2){
-      const c = hex.replace('#','');
-      const n = parseInt(c,16);
-      const r = (n>>16)&255, g=(n>>8)&255, b=n&255;
-      return `rgba(${r},${g},${b},${a})`;
-    }
-
-    function initFromURL() {
-      const p = new URLSearchParams(location.search);
-      const routes = (p.get('routes')||'').split(',').filter(Boolean);
-      const ref = p.get('ref_date');
-      if (ref) refInput.value = ref;
-      if (routes.length) {
-        chips.forEach(c => {
-          const key = `${c.dataset.origin}-${c.dataset.destination}`;
-          if (routes.includes(key)) c.classList.remove('outline'); else c.classList.add('outline');
-        });
-      } else {
-        chips.forEach((c,i)=>{ if(i<3) c.classList.remove('outline'); else c.classList.add('outline'); });
-      }
+    btnClear.addEventListener('click',()=>{
+      chipsBox.innerHTML='';
       updateSelCount();
+      updateButtons();
+      bestDealText.textContent='Click "Compare Selected Routes" to load';
+      priceList.innerHTML='';
+      trendGrid.innerHTML='';
+      legendBox.innerHTML='';
+      charts.forEach(c=>c.destroy());
+      charts=[];
+    });
+
+    refInput.addEventListener('change',()=>{
+      const d=new Date(refInput.value);
+      if(!isNaN(d)){dateLabel.textContent=d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}
+    });
+
+    async function fetchOne(origin,destination){
+      const token=String(Date.now())+'-'+Math.random().toString(36).slice(2);
+      const url=`${SMARTLIPAD.API_BASE}/flights/predictions?origin=${origin}&destination=${destination}&months=12&token=${token}`;
+      const res=await fetch(url);
+      if(!res.ok)throw new Error(await res.text());
+      return res.json();
     }
+
+    function skyscannerDate(iso){return iso.replace(/-/g,'')}
+    function providerLinks(o,d,iso){
+      const gs=`https://www.google.com/travel/flights?hl=en#flt=${o}.${d}.${iso};c:PHP;e:1;sd:1;t:f`;
+      const sky=`https://www.skyscanner.com/transport/flights/${o.toLowerCase()}/${d.toLowerCase()}/${skyscannerDate(iso)}/?adultsv2=1&cabinclass=economy&currency=PHP`;
+      return {google:gs,skyscanner:sky};
+    }
+
+    async function fetchAndAssemble(){
+      const routes=getSelectedRoutes();
+      if(!routes.length){
+        bestDealText.textContent='Select routes first';
+        renderCharts([]);
+        priceList.innerHTML='';
+        return;
+      }
+      bestDealText.textContent='Loading…';
+      const refMonth=monthKeyFromISO(refInput.value);
+      try{
+        const results=await Promise.all(routes.map(r=>fetchOne(r.origin,r.destination).then(d=>({r,d}))));
+        const blocks=results.map(({r,d})=>{
+          const series=(d.monthly_forecast||[]).filter(x=>x.avg_fare!=null).map(x=>({month:x.month,price:Number(x.avg_fare)}));
+          const overall=Number(d.avg_fare||0)||(series.length?Math.round(series.reduce((a,b)=>a+b.price,0)/series.length):0);
+          const refEntry=series.find(s=>s.month===refMonth)||null;
+          const current_price=refEntry?refEntry.price:(series.length?series[0].price:null);
+          const delta_vs_avg=current_price!=null?Math.round(current_price-overall):0;
+          return{route:`${r.origin}-${r.destination}`,series,current_price,delta_vs_avg};
+        });
+        let best=null;
+        blocks.forEach(b=>{
+          if(b.current_price!=null){
+            const cheaper_by=-b.delta_vs_avg;
+            if(cheaper_by>0&&(!best||cheaper_by>best.cheaper_by)){best={route:b.route,cheaper_by}}
+          }
+        });
+        renderBest(best);
+        renderList(blocks);
+        renderCharts(blocks);
+      }catch(e){
+        bestDealText.textContent='Unable to load comparison right now';
+        renderCharts([]);priceList.innerHTML='';
+      }
+    }
+
+    function renderBest(best){
+      if(best&&best.route&&best.cheaper_by!=null){
+        bestDealText.textContent=`${labelFromRoute(best.route)} is ₱${Number(best.cheaper_by).toLocaleString()} cheaper than usual`;
+      }else{
+        bestDealText.textContent='No standout deals for the selected month';
+      }
+    }
+
+    function renderList(blocks){
+      const rows=(blocks||[]).map(r=>{
+        const routeLabel=labelFromRoute(r.route);
+        const price=r.current_price!=null?`₱${Number(r.current_price).toLocaleString()}`:'—';
+        const delta=Number(r.delta_vs_avg||0);
+        const deltaText=delta===0?'':(delta<0?`<span class="delta down">▼ ₱${Math.abs(delta).toLocaleString()}</span>`:`<span class="delta up">▲ ₱${Math.abs(delta).toLocaleString()}</span>`);
+        const [o,d]=r.route.split('-');
+        const ref=refInput.value;
+        const links=providerLinks(o,d,ref);
+        return `<div class="row">
+          <div class="route">${routeLabel}</div>
+          <div class="price">${price} ${deltaText}</div>
+          <div class="providers">
+            <a class="provider" href="${links.skyscanner}" target="_blank" rel="noopener">Skyscanner</a>
+            <a class="provider alt" href="${links.google}" target="_blank" rel="noopener">Google Flights</a>
+          </div>
+        </div>`;
+      }).join('');
+      priceList.innerHTML=rows||'<div style="color:#6b7280">No routes selected.</div>';
+    }
+
+    function renderCharts(blocks){
+      charts.forEach(c=>c.destroy());charts=[];trendGrid.innerHTML='';legendBox.innerHTML='';
+      blocks.slice(0,5).forEach((b,idx)=>{
+        const card=document.createElement('div');card.className='chart-card';
+        const title=document.createElement('div');title.className='chart-title';title.textContent=labelFromRoute(b.route);
+        const wrap=document.createElement('div');wrap.className='chart-wrap';
+        const canvas=document.createElement('canvas');
+        wrap.appendChild(canvas);card.appendChild(title);card.appendChild(wrap);trendGrid.appendChild(card);
+        const labels=(b.series||[]).map(p=>p.month).map(m=>monthToShort(m));
+        const data=(b.series||[]).map(p=>Number(p.price));
+        const color=palette[idx%palette.length];
+        const min=data.length?Math.min(...data):0;const max=data.length?Math.max(...data):0;const pad=data.length?Math.max(200,Math.round((max-min)*0.2)):200;
+        const chart=new Chart(canvas.getContext('2d'),{
+          type:'line',
+          data:{labels,datasets:[{label:labelFromRoute(b.route),data,borderColor:color,backgroundColor:hexToRGBA(color,0.12),pointBackgroundColor:color,tension:.3,borderWidth:2}]},
+          options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{suggestedMin:Math.max(0,min-pad),suggestedMax:max+pad,ticks:{callback:v=>'₱'+Number(v).toLocaleString()}}}}
+        });
+        charts.push(chart);
+        legendBox.innerHTML+=`<span><span class="dot" style="background:${color}"></span>${labelFromRoute(b.route)}</span>`;
+      });
+    }
+
+    function selectByGuess(select,value){
+      if(!value)return;
+      const val=value.trim();
+      const m1=val.match(/\(([A-Z]{3})\)/);
+      const m2=val.match(/\b([A-Z]{3})\b$/);
+      const pure=/^[A-Z]{3}$/.test(val)?val:null;
+      const code=(m1&&m1[1])||(m2&&m2[1])||pure;
+      let opt=null;
+      if(code){
+        opt=[...select.options].find(o=>{
+          const mm=o.textContent.match(/\b([A-Z]{3})\b\)?\s*$/);
+          return mm&&mm[1]===code;
+        });
+      }
+      if(!opt){opt=[...select.options].find(o=>o.textContent.trim()===val)}
+      if(!opt&&code){opt=[...select.options].find(o=>o.textContent.includes(code))}
+      if(opt){select.value=opt.value}
+    }
+
+    function initFromURL(){
+      const p=new URLSearchParams(location.search);
+      const routes=(p.get('routes')||'').split(',').filter(Boolean);
+      const ref=p.get('ref_date');
+      const from=p.get('origin')||p.get('from')||'MNL';
+      const to=p.get('destination')||p.get('to')||'CEB';
+      if(ref){refInput.value=ref;const d=new Date(ref);if(!isNaN(d))dateLabel.textContent=d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})}
+      selectByGuess(fromSel,from);
+      selectByGuess(toSel,to);
+      if(routes.length){routes.slice(0,5).forEach(r=>{const [o,d]=r.split('-');ensureChip(o,d)})}else{ensureChip('MNL','CEB')}
+      updateSelCount();
+      updateButtons();
+    }
+
+    btnCompare.addEventListener('click',fetchAndAssemble);
 
     initDate();
     initFromURL();
-    fetchAndRender();
   </script>
 </body>
 </html>

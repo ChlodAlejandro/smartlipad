@@ -33,7 +33,6 @@
     .stops{font-size:12px;color:#0f172a;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:999px;padding:4px 8px;justify-self:start}
     .pricebox{text-align:right}
     .price{font-weight:800;font-size:18px}
-    .deal{display:inline-block;margin-top:6px;font-size:12px;color:#065f46;background:#ecfdf5;border:1px solid #bbf7d0;border-radius:999px;padding:4px 8px;font-weight:700}
     .btn{display:inline-block;margin-top:8px;background:var(--primary);color:#fff;border:0;border-radius:10px;padding:10px 12px;font-weight:800;text-decoration:none}
     .tips{margin-top:12px;background:#fff;border:1px solid var(--ring);border-radius:12px;padding:12px}
     .tips h4{margin:0 0 6px} .tips p{margin:0;color:#6b7280;font-size:14px}
@@ -63,160 +62,119 @@
     <div class="tips"><h4>💡 Pro Tips</h4><p>Prices are generally lower when you book 1–2 months in advance. Try to avoid peak hours (5–9am & 5–9pm).</p></div>
     <div class="badge">Made by • you</div>
   </div>
+
   <script src="assets/config.js"></script>
-<script src="assets/config.js"></script>
-<script src="assets/config.js"></script>
-<script>
-  function fmtCurrency(v, c) {
-    try { return (+v).toLocaleString("en-PH", { style: "currency", currency: c || "PHP" }); }
-    catch { return `₱${v}`; }
-  }
-
-  function toHHMM(t) {
-    if (!t) return "";
-    if (/^\d{2}:\d{2}$/.test(t)) return t;
-    const d = new Date(t);
-    if (isNaN(d)) return "";
-    const hh = String(d.getHours()).padStart(2, "0");
-    const mm = String(d.getMinutes()).padStart(2, "0");
-    return `${hh}:${mm}`;
-  }
-
-  function minutesFromISO(dur) {
-    if (!dur) return null;
-    let m = dur.match(/^PT(?:(\d+)H)?(?:(\d+)M)?$/i);
-    if (!m) {
-      m = dur.match(/^(?:(\d+)h)?(?:(\d+)m)?$/i);
-    }
-    if (!m) return null;
-    return (m[1] ? +m[1] * 60 : 0) + (m[2] ? +m[2] : 0);
-  }
-
-  function render(offers, origin, destination, currency) {
-    const wrap = document.getElementById("results");
-    wrap.innerHTML = "";
-    document.getElementById("countTag").textContent = `${offers.length} flights found`;
-
-    if (!offers.length) {
-      wrap.innerHTML = `<div class="tips"><h4>No offers</h4><p>Try another date or route.</p></div>`;
-      return;
-    }
-
-    for (const o of offers) {
-      const logoText = (o.airline_code || "XX").slice(0, 2).toUpperCase();
-      const airline   = o.airline_name || o.carrier || "Airline";
-      const dep       = toHHMM(o.departure_time);
-      const arr       = toHHMM(o.arrival_time);
-      const dur       = o.duration_human || o.duration || "";
-      const aircraft  = o.aircraft || "";
-      const stopsNum  = typeof o.stops === "number" ? o.stops : 0;
-      const stopsText = (stopsNum === 0) ? "Non-stop" : `${stopsNum} stop${stopsNum > 1 ? "s" : ""}`;
-      const price     = fmtCurrency(o.price, currency);
-      const link      = o.deeplink || "#";
-      const color     = "#2563eb";
-
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML =
-        `<div>
-          <div class="air">
-            <div class="logo" style="background:${color}">${logoText}</div>
-            <div class="name">${airline}</div>
+  <script>
+    function fmtCurrency(v,c){const n=Number(v);return Number.isFinite(n)?n.toLocaleString("en-PH",{style:"currency",currency:c||"PHP"}):"—"}
+    function toHHMM(t){if(!t)return"";if(/^\d{2}:\d{2}$/.test(t))return t;const d=new Date(t);if(isNaN(d))return"";return String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+    function minutesFromISO(dur){if(!dur)return null;let m=dur.match(/^PT(?:(\d+)H)?(?:(\d+)M)?$/i);if(!m)m=dur.match(/^(?:(\d+)h)?(?:(\d+)m)?$/i);if(!m)return null;return (m[1]?+m[1]*60:0)+(m[2]?+m[2]:0)}
+    function yyyymmdd(iso){const [y,m,d]=String(iso||"").split("-");return y&&m&&d?`${y}${m}${d}`:""}
+    function fallbackLink(origin,destination,date,currency,adults){return `https://www.skyscanner.com/transport/flights/${origin.toLowerCase()}/${destination.toLowerCase()}/${yyyymmdd(date)}/?adults=${adults}&cabinclass=economy&currency=${currency}`}
+    function render(offers,origin,destination,currency,date,adults){
+      const wrap=document.getElementById("results");
+      wrap.innerHTML="";
+      document.getElementById("countTag").textContent=`${offers.length} flights found`;
+      if(!offers.length){wrap.innerHTML=`<div class="tips"><h4>No offers</h4><p>Try another date or route.</p></div>`;return}
+      const fb=fallbackLink(origin,destination,date,currency,adults);
+      for(const o of offers){
+        const logoText=(o.airline_code||"XX").slice(0,2).toUpperCase();
+        const airline=o.airline_name||o.carrier||"Airline";
+        const dep=toHHMM(o.departure_time);
+        const arr=toHHMM(o.arrival_time);
+        const dur=o.duration_human||o.duration||"";
+        const aircraft=o.aircraft||"";
+        const stopsNum=typeof o.stops==="number"?o.stops:0;
+        const stopsText=(stopsNum===0)?"Non-stop":`${stopsNum} stop${stopsNum>1?"s":""}`;
+        const priceVal=o.price_total??o.price?.total??o.total??o.amount??o.minPrice??o.fare??o.price;
+        const price=fmtCurrency(priceVal,currency);
+        const link=o.deeplink||o.deep_link||fb;
+        const color="#2563eb";
+        const card=document.createElement("div");
+        card.className="card";
+        card.innerHTML=
+          `<div>
+            <div class="air">
+              <div class="logo" style="background:${color}">${logoText}</div>
+              <div class="name">${airline}</div>
+            </div>
+            <div class="meta">
+              <div class="time">${dep||"—"}</div>
+              <div class="dur">${dur}${aircraft?` · ${aircraft}`:""}</div>
+              <div class="time" style="text-align:right">${arr||"—"}</div>
+            </div>
+            <span class="stops">${stopsText} • ${origin} → ${destination}</span>
           </div>
-          <div class="meta">
-            <div class="time">${dep || "—"}</div>
-            <div class="dur">${dur}${aircraft ? ` · ${aircraft}` : ""}</div>
-            <div class="time" style="text-align:right">${arr || "—"}</div>
-          </div>
-          <span class="stops">${stopsText} • ${origin} → ${destination}</span>
-        </div>
-        <div class="pricebox">
-          <div class="price">${price}</div>
-          <a class="btn" href="${link}" target="_blank" rel="noopener">Book</a>
-        </div>`;
-      wrap.appendChild(card);
-    }
-  }
-
-  (async () => {
-    const p = new URLSearchParams(location.search);
-    const origin    = p.get("origin");
-    const destination = p.get("destination");
-    const date      = p.get("date");
-    const adults    = p.get("adults") || 1;
-    const currency  = p.get("currency") || "PHP";
-
-    document.getElementById("routeChip").textContent = `${origin} → ${destination}`;
-    document.getElementById("dateChip").textContent  = date || "—";
-    document.getElementById("paxChip").textContent   = `${adults} adult${adults > 1 ? "s" : ""}, Economy`;
-
-    const api = window.SMARTLIPAD.API_BASE;
-    const url = `${api}/flights/flight-offers?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&date=${encodeURIComponent(date)}&adults=${encodeURIComponent(adults)}&currency=${encodeURIComponent(currency)}`;
-
-    let data;
-    try {
-      const r = await fetch(url);
-      if (!r.ok) throw new Error(`${r.status} ${await r.text()}`);
-      data = await r.json();
-    } catch (e) {
-      console.error("Couldn’t load flights", e);
-      location.href = "error.html";
-      return;
-    }
-
-    const raw = Array.isArray(data) ? data : (Array.isArray(data.offers) ? data.offers : []);
-    const norm = raw.map(o => ({
-      airline_code: o.airline_code || o.validating_airline || o.carrierCode || "XX",
-      airline_name: o.airline_name || o.carrier || o.carrierName || o.validatingAirline || "Airline",
-      departure_time: o.departure_time,
-      arrival_time:   o.arrival_time,
-      duration:       o.duration,
-      duration_human: o.duration_human,
-      aircraft:       o.aircraft,
-      stops:          typeof o.stops === "number" ? o.stops : 0,
-      price:          o.price?.total || o.price,
-      deeplink:       o.deeplink || o.deep_link || "#",
-      itineraries:    o.itineraries || []
-    }));
-
-    const sortSel  = document.getElementById("sortSel");
-    const stopsSel = document.getElementById("stopsSel");
-
-    function apply() {
-      let arr = [...norm];
-      const stopsVal = stopsSel.value;
-      if (stopsVal !== "any") {
-        const n = +stopsVal;
-        arr = arr.filter(x => x.stops === n);
+          <div class="pricebox">
+            <div class="price">${price}</div>
+            <a class="btn" href="${link}" target="_blank" rel="noopener">Book Now</a>
+          </div>`;
+        wrap.appendChild(card);
       }
-      const key = sortSel.value;
-      if (key === "price") {
-        arr.sort((a, b) => (+a.price) - (+b.price));
-      } else if (key === "duration") {
-        arr.sort((a, b) =>
-          (minutesFromISO(a.duration) ?? 1e9) - (minutesFromISO(b.duration) ?? 1e9)
-        );
-      } else if (key === "depart") {
-        const toMin = t => {
-          if (!t) return 1e9;
-          if (/^\d{2}:\d{2}$/.test(t)) {
-            const [h, m] = t.split(":").map(Number);
-            return h * 60 + m;
-          }
-          const d = new Date(t);
-          return isNaN(d) ? 1e9 : d.getHours() * 60 + d.getMinutes();
-        };
-        arr.sort((a, b) => toMin(a.departure_time) - toMin(b.departure_time));
-      }
-      render(arr, origin, destination, currency);
     }
-
-    sortSel.addEventListener("change", apply);
-    stopsSel.addEventListener("change", apply);
-    apply();
-  })();
-</script>
-
-
+    (async()=>{
+      const p=new URLSearchParams(location.search);
+      const origin=(p.get("origin")||"").toUpperCase();
+      const destination=(p.get("destination")||"").toUpperCase();
+      const date=p.get("date")||"";
+      const adults=+(p.get("adults")||1);
+      const currency=p.get("currency")||"PHP";
+      document.getElementById("routeChip").textContent=`${origin} → ${destination}`;
+      document.getElementById("dateChip").textContent=date||"—";
+      document.getElementById("paxChip").textContent=`${adults} adult${adults>1?"s":""}, Economy`;
+      const api=window.SMARTLIPAD.API_BASE;
+      const url=`${api}/flights/flight-offers?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&date=${encodeURIComponent(date)}&adults=${encodeURIComponent(adults)}&currency=${encodeURIComponent(currency)}`;
+      let data;
+      try{
+        const r=await fetch(url);
+        if(!r.ok)throw new Error(`${r.status} ${await r.text()}`);
+        data=await r.json();
+      }catch{
+        location.href="error.html";
+        return;
+      }
+      const raw=Array.isArray(data)?data:(Array.isArray(data.offers)?data.offers:(Array.isArray(data.data)?data.data:[]));
+      const norm=raw.map(o=>({
+        airline_code:o.airline_code||o.validating_airline||o.carrierCode||"XX",
+        airline_name:o.airline_name||o.carrier||o.carrierName||o.validatingAirline||"Airline",
+        departure_time:o.departure_time||o.departure||(o.itineraries?.[0]?.segments?.[0]?.departure?.at)||"",
+        arrival_time:o.arrival_time||o.arrival||(o.itineraries?.[0]?.segments?.slice(-1)[0]?.arrival?.at)||"",
+        duration:o.duration||(o.itineraries?.[0]?.duration)||"",
+        duration_human:o.duration_human||"",
+        aircraft:o.aircraft||"",
+        stops:typeof o.stops==="number"?o.stops:((o.itineraries?.[0]?.segments?.length||1)-1),
+        price:o.price_total??o.price?.total??o.total??o.amount??o.minPrice??o.fare??o.price,
+        deeplink:o.deeplink||o.deep_link||""
+      }));
+      const sortSel=document.getElementById("sortSel");
+      const stopsSel=document.getElementById("stopsSel");
+      function apply(){
+        let arr=[...norm];
+        const stopsVal=stopsSel.value;
+        if(stopsVal!=="any"){
+          const n=+stopsVal;
+          arr=arr.filter(x=>x.stops===n);
+        }
+        const key=sortSel.value;
+        if(key==="price"){
+          arr.sort((a,b)=>{
+            const ap=Number(a.price);const bp=Number(b.price);
+            if(!Number.isFinite(ap)&&!Number.isFinite(bp))return 0;
+            if(!Number.isFinite(ap))return 1;
+            if(!Number.isFinite(bp))return -1;
+            return ap-bp;
+          });
+        }else if(key==="duration"){
+          arr.sort((a,b)=>(minutesFromISO(a.duration)??1e9)-(minutesFromISO(b.duration)??1e9));
+        }else if(key==="depart"){
+          const toMin=t=>{if(!t)return 1e9;if(/^\d{2}:\d{2}$/.test(t)){const[h,m]=t.split(":").map(Number);return h*60+m}const d=new Date(t);return isNaN(d)?1e9:d.getHours()*60+d.getMinutes()};
+          arr.sort((a,b)=>toMin(a.departure_time)-toMin(b.departure_time));
+        }
+        render(arr,origin,destination,currency,date,adults);
+      }
+      sortSel.addEventListener("change",apply);
+      stopsSel.addEventListener("change",apply);
+      apply();
+    })();
+  </script>
 </body>
 </html>

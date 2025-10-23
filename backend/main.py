@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.core.config import get_settings
 from backend.core.logging import app_logger
 from backend.database import init_db
+from backend.api.auth import router as auth_router
+from backend.api.flights import router as flights_router
 
 settings = get_settings()
 
@@ -27,12 +29,8 @@ async def startup_event():
     app_logger.info("Starting SmartLipad API...")
     app_logger.info(f"Debug mode: {settings.DEBUG}")
     app_logger.info(f"Database: {settings.DB_NAME}")
-    try:
-        init_db()
-        app_logger.info("Database initialized successfully")
-    except Exception as e:
-        app_logger.error(f"Database initialization failed: {e}")
-        raise
+    init_db()
+    app_logger.info("Database initialized successfully")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -50,9 +48,6 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy", "database": "connected"}
-
-from backend.api.auth import router as auth_router
-from backend.api.flights import router as flights_router
 
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(flights_router, prefix="/api/flights", tags=["Flights"])
