@@ -51,12 +51,6 @@ copy .env.docker .env
 
 # 3. Start services
 docker-compose up -d
-
-# 4. Initialize database
-docker-compose exec backend python backend/scripts/init_db.py
-
-# 5. Access API
-# http://localhost:8000/docs
 ```
 ---
 
@@ -85,11 +79,6 @@ docker-compose exec backend python backend/scripts/init_db.py
    copy .env.example .env
    ```
 
-4. Initialize database:
-   ```bash
-   python backend/scripts/init_db.py
-   ```
-
 **Running the Application:**
 
 Development server:
@@ -107,107 +96,3 @@ uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 Once running, visit:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
-
-## Development
-
-### Running Tests
-
-**Run all tests:**
-```bash
-pytest
-```
-
-**Run specific test categories:**
-```bash
-# Unit tests only
-pytest -m unit
-
-# Integration tests
-pytest -m integration
-
-# Skip slow tests
-pytest -m "not slow"
-
-# Run specific test file
-pytest tests/test_auth.py
-
-# Run specific test class
-pytest tests/test_auth.py::TestUserRegistration
-
-# Run specific test
-pytest tests/test_auth.py::TestUserRegistration::test_register_new_user
-```
-
-**Run tests with coverage:**
-```bash
-# Generate coverage report
-pytest --cov=backend --cov-report=html
-
-# View HTML coverage report
-# Open htmlcov/index.html in browser
-
-# Terminal coverage report
-pytest --cov=backend --cov-report=term-missing
-```
-
-**Run tests in parallel (faster):**
-```bash
-pip install pytest-xdist
-pytest -n auto
-```
-
-**Test markers available:**
-- `unit` - Unit tests
-- `integration` - Integration tests
-- `slow` - Slow-running tests
-- `api` - API endpoint tests
-- `database` - Database tests
-- `scraper` - Scraper tests
-- `forecast` - Forecasting tests
-- `auth` - Authentication tests
-
-### Code Quality
-
-**Format code:**
-```bash
-black backend/ tests/
-```
-
-**Sort imports:**
-```bash
-isort backend/ tests/
-```
-
-**Lint code:**
-```bash
-flake8 backend/
-```
-
-**Type checking:**
-```bash
-mypy backend/
-```
-
-**Run all quality checks:**
-```bash
-black --check backend/ tests/
-isort --check-only backend/ tests/
-flake8 backend/
-pytest --cov=backend
-```
-
-### Database Migrations
-```bash
-# Create new migration
-alembic revision --autogenerate -m "description"
-
-# Apply migrations
-alembic upgrade head
-
-# Rollback
-alembic downgrade -1
-```
-
-## License
-
-MIT License
